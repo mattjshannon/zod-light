@@ -1,0 +1,17 @@
+\begintext 
+    These are the kernels which I want to load
+\begindata
+
+
+PATH_VALUES  = (
+		 '/ssc/uplink/work/set21/sut/booth/sos/sysfiles/ephem',
+		 '/sos/sysfiles/S8_OPS_COPY/ephem'
+		 )
+PATH_SYMBOLS = ( 'A',
+		 'B',
+		 )
+KERNELS_TO_LOAD = ( '$A/leapseconds.ker',
+		    '$A/de.bsp',
+		    '$B/sirtf.bsp',
+		    )
+

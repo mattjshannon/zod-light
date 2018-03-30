@@ -1,0 +1,148 @@
+.TH jbposa 3C "07 September 1995" "Version 1.0" "IPAC Tools"
+.SH NAME
+jbposa - compute position angle and distance using two points on sky
+.SH SYNOPSIS
+.B  "jbposa (\|xlon1, xlat1, xlon0, xlat0, distd, paou, ipf)
+.br
+.B  "int *ipf;"
+.br
+.B  "double xlon1, xlat1, xlon0, xlat0, *distd, *paou;"
+
+.PD 1
+.SH DESCRIPTION
+.B  jbposa
+is a subroutine to compute position angle between two points on the sky.
+Distance between the two points is also computed.  
+.B  jbposa
+returns the distance and position angle in
+.IR *distd " and " *paou "."
+A process-information flag is returned in
+.IR *ipf "."
+The calling program must provide values for 
+.IR xlon1 "\|, " xlat1 "\|,"
+.IR xlon0 " and " xlat0 "." 
+.PP
+All arguments are double precision except for
+.IR ipf ";"  
+all angles are decimal degrees:
+.TP
+.I  xlon1
+is longitude, in decimal degrees, of a point
+(e.g. at a vertex of an error ellipse);
+.RI "0.0  <=  " xlon1 "  <=  360.0."
+.TP
+.I  xlat1
+is latitude, in decimal degrees,  of a point (e.g. at a vertex of an error
+ellipse);
+.RI "\-90.0  <=  " xlat1 "  <=  +90.0."
+Presently, if
+.I  xlat1
+is within .0002" of pole, position will be
+treated as pole (with
+.I  xlon1
+treated as 0.).
+.TP
+.I  xlon0
+is longitude, in decimal degrees, of reference point or
+central point of an error ellipse;
+.RI "0.0  <=  " xlon0 "  <=  360.0."
+.TP
+xlat0
+is latitude, in decimal degrees, of reference point or
+central point of an error ellipse;
+.RI "\-90.0  <=  " xlat0 "  <=  +90.0."
+Presently, if
+.I  xlat0
+is within .0002" of pole, position will be
+treated as pole (with
+.I  xlon0
+treated as 0.).
+.TP
+.I  *distd
+is distance between the 2 positions in degrees;
+.IR *distd "  >=   0.0, returned."
+.TP
+.I  *paou
+is output position angle, in degrees east of north, of
+.RI "(" xlon1 ",\|" xlat1 ")"
+as seen from
+.RI "(" xlon0 ",\|" xlat0 ");"
+.RI "0.0  <=  " *paou "  <  360.0, returned."
+.TP
+.I  *ipf
+is processing flag (returned):
+.br
+.RS +5
+.TP 
+0 =
+position angle not computed.
+.br
+If
+.IR *distd "  >  0.0, then " *distd " was computed."
+.br
+If
+.IR *distd "  >=  90.0, " *paou " is not computed."
+.TP
+1 =
+normal return (position angle and distd computed).
+.TP
+2 =
+paou computed, but one of input points treated as though
+exactly at a pole.  Distance is also computed.
+.RE
+
+.SH NOTES
+The following information is provided to help avoid user-subroutine
+name conflicts.
+.PP
+The
+.B  jbposa
+module contains the following subroutines:
+jbposa and jbelpt.
+
+.SH C EXAMPLE
+.nf
+  C EXAMPLE FOR THE SUNS (USING jbposa)
+
+#include <math.h>
+
+main()
+{
+
+   int    ipf;
+   double xlon1;
+   double xlat1;
+   double xlon0;
+   double xlat0;
+   double distd;
+   double paou;
+
+   xlon1 = 251.0;
+   xlat1 = +30.0;
+   xlon0 = 252.0;
+   xlat0 = +31.0;
+
+   jbposa(xlon1, xlat1, xlon0, xlat0, &distd, &paou, &ipf);
+
+/* distd & paou will contain double precision decimal degrees    */
+/*   if ipf >= 1. If ipf = 0, paou could not be computed.        */
+
+}
+.fi
+.SH FILES
+.TP 20
+libjbcvt.a
+Coordinate conversion/precession library
+.SH SEE ALSO
+jbelpt(3C)
+.SH IDENTIFICATION
+Acknowledgement:
+.br
+This subroutine is translated from libjbcvt.a FORTRAN
+library version 1.0, written by Judy Bennett. The description and C exmaple
+come from jbposa(3F).
+.br
+
+Author:  Jing Li 
+.br
+Program date (latest version):  07 September 1995

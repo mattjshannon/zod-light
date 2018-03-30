@@ -1,0 +1,43 @@
+		BackgroundModel
+
+This is a stand-alone version of the IPAC background model, developed by
+Bill Reach and coded by Judy Bennett. It's the same
+code as is used in the AIRE server for Spitzer (spot, etc.), but with
+the Java and server wrapping removed. So, it is pure c code.
+
+
+The program is executed with the command line:
+BackgroundModel <ra> <dec> <wl> <day> <year> <observer>
+where 
+  ra & dec are decimal degrees,
+  wl is wavelength in microns,
+  day is day of year, with the first day being day=1
+  year is in range 1901-2099, but the real limits are imposed by the range
+    of the ephemeris files.
+  observer is a location recognized by cspice, for example "sirtf", 
+    -79, planck, earth, etc.  
+
+For example:
+BackgroundModel 15 1 160.0 9 2004 sirtf
+obtains the background for a sirtf observation of 1h 1d 160um on Jan 9, 2004.
+
+The location of the ephemeris files is given in file kernel.list. 
+To use the program with another observer, like Planck, you must 
+change kernels.list to point to the planck ephemeris file, 
+and specify "planck" on the command line.
+
+
+
+To build the program:
+
+First make sure that you have the library cspice.a appropriate for your
+machine's architecture.  This tar file includes cspice.a for Linux 64-bit.
+To obtain another version, visit the JPL NAIF site at
+http://naif.jpl.nasa.gov/naif/toolkit.html
+
+Then, in the top directory:
+
+make linux
+  or
+make solaris
+

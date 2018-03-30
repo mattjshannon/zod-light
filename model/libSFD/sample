@@ -1,0 +1,6 @@
+  Sample output from testsub2 on 07June1999:
+
+glon, glat, E(B-V)mag.,retcode =  121.00  -21.50    0.34226 0
+glon, glat, E(B-V)mag.,retcode =   12.00   34.50    0.12773 0
+glon, glat, hcons, mask_chars =  121.00  -21.50
+ 1 OK      OK      OK      OK      big_obj OK     

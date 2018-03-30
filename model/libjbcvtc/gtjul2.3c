@@ -1,0 +1,383 @@
+.TH gtjul2 3C "09 September 1995" "Version 1.0" "IPAC Tools"
+.SH NAME
+gtjul2, gtjulp - B1950 to J2000 coordinate conversion subroutines
+.SH SYNOPSIS
+.B  "gtjul2 (\|eqx, ra, dec, tobs, ieflg, raout, decout)"
+.br
+.B  int ieflg;
+.br
+.B  "double eqx, ra, dec, tobs, *raout, *decout;"
+.br
+
+.B  "gtjulp (\|reserv, ra, dec, pma, pmd, pin, vin, ieflg,"
+.br
+.B  "        raout, decout, pmaout, pmdout)"
+.br
+.B  int ieflg;
+.br
+.B  "double reserv, ra, dec, pma, pmd, pin, vin,"
+.br
+.B  "       *raout, *decout, *pmaout, *pmdout;"
+
+.PD 1
+.SH DESCRIPTION
+.RB "The " gtjul2 " and " gtjulp
+subroutines do accurate astronomical conversion of Besselian
+system (i.e. B1950) positions to the J2000.0 system.
+The method used in these subroutines follows, in spirit, that which is 
+outlined in the FK5 Catalogue (1988) and is based on the
+IAU (1976) System of Astronomical Constants.
+The systematic
+correction "FK5-FK4" (with the exception of the portion of the
+correction that is a function of magnitude for mag. 1 through 7
+stars) is applied by default.
+.PP
+.B  gtjul2  
+is a subroutine to convert Besselian (Newcomb) type positions
+to equator and equinox of J2000.0.
+.B  gtjul2
+converts radio source positions and other positions, from catalogs, for
+which no proper motion values are given.
+.B  gtjul2
+returns the J2000 position in
+.IR raout " and " decout "."
+The calling program must specify values for
+.IR eqx ", " ra ", "
+.IR dec ", " tobs " and "
+.IR ieflg "."
+.PP
+.B  gtjulp
+is a subroutine to convert Besselian (Newcomb) type positions
+and proper motions to equinox, equator and epoch of J2000.0.
+.B  gtjulp
+returns the J2000 position and proper motions in
+.IR raout ", " decout ","
+.IR pmaout " and " pmdout "."
+The calling program must specify values for
+.IR ra ", "
+.IR dec ", " pma ", " pmd ","
+.IR pin ", " vin " and"
+.IR ieflg "."
+.PP
+To reverse the process
+.B  unjul2
+may be used with the output of
+.BR gtjul2 " ( and " unjulp " with the output of "
+.BR gtjulp " )."
+.PP
+Important Note:
+.BR gtjul2 " is not interchangeable with " gtjulp "."
+The user must select the appropriate routine based on the type of
+position data to be converted.
+A given B1950 right ascension and declination input to
+.B  gtjulp
+with proper motions of zero will not
+yield the same right ascension and declination at J2000 as
+.B  gtjul2
+(where proper motions are "unknown" or "intrinsically zero").
+.B  gtjulp
+produces non-zero output proper motions at J2000
+when the B1950 proper motions are zero.
+This is consistent with
+the application of the time dependent portion of the equinox
+correction to proper motion in right ascension and the FK5-FK4
+corrections and the change in precession constants as applied to
+proper motions in right ascension and declination.
+If the object's
+proper motions are "intrinsically" zero (e.g. for a radio source), then
+.BR gtjul2 " must be used."
+.PP
+All arguments are double precision except for
+.IR ieflg "; all angles are decimal degrees unless noted otherwise:"
+.TP
+.I  eqx
+is the Besselian equinox of the input position 
+(e.g. 1950.0 for B1950).  (
+.BR gtjul2 " only)."
+.TP
+.I ra
+is right ascension of the input position in decimal degrees.
+(\|0.0  <=
+.IR ra "   <=  360.0\|)."
+.TP 
+.I  dec
+is declination of the input position in decimal degrees.
+(\|\-90.0  <=
+.IR dec "  <=  +90.0\|)."
+.TP
+.I  tobs
+is year (Besselian based) of observation, if known
+(e.g. 1983.5). If unknown, use the value of 1950.0.
+If 0.0,
+.BR gtjul2 " uses the value of "
+.IR eqx  " for " tobs "."
+.IR tobs " is used by "
+.BR gtjul2 " only; not used in "
+.BR gtjulp "."
+.TP
+.I  ieflg
+is flag allowing removal of E-terms of aberration:
+.br
+\01 = remove E-terms
+.RI "(" ieflg " should usually = 1)."
+.br
+\-1 = do not remove E-terms.
+.TP
+.I  *raout
+is output right ascension of position at equator and
+equinox of J2000.0 
+.RI "(\|0.0  <= "  *raout " <=  360.0 decimal degrees, returned)."
+.TP                
+.I  *decout
+is output declination of position at equator and 
+equinox of J2000.0
+.RI "(\|\-90.0  <= " *decout "  <=  +90.0 decimal degrees, returned)."
+.PP
+.RS +5
+The following additional arguments are for
+.BR gtjulp " only"
+.TP
+note:
+.IR eqx " and " tobs " are not part of the "
+.BR gtjulp " argument list;"
+.IR ra " and " dec " must be for B1950."
+.br
+.RE
+.TP
+.I  reserv
+is a double precision reserved argument; presently ignored.
+.TP
+.I  pma
+is proper motion in ra in seconds of time per tropical
+century for B1950.
+.TP
+.I  pmd
+is proper motion in dec in seconds of arc per tropical
+century for B1950.
+.TP
+.I pin
+is parallax in arc seconds (0.0 if unknown).
+.TP
+.I  vin
+is radial velocity in km/sec (0.0 if unknown).
+.TP
+.I  *pmaout
+is proper motion in ra in seconds of time per Julian
+century for J2000 (returned).
+.TP
+.I  *pmdout
+is proper motion in dec in seconds of arc per Julian
+century for J2000 (returned).
+.RS +5
+.TP
+Note:
+.RB "For " gtjulp ","
+if the position and proper motions are not 
+for B1950, they must be first precessed from their present
+equinox and epoch to equinox and epoch of B1950
+(subroutine nwcprp may be used for this).
+.RE
+
+.SH NOTE 1
+Re: THE IMPORTANCE OF TOBS VALUE FOR GTJUL2:
+.PP
+The importance of the
+.IR tobs " value for "
+.BR gtjul2 "  (and "
+.BR unjul2 ") is"
+demonstrated below.  The table shows the difference in J2000 output
+values from a test using
+.IR tobs " = 1983.5 and " tobs " = 1950.0 as input to"
+.BR gtjul2 ". The "
+.IR ra " and "
+.IR dec " input values were identical, only the " tobs
+and resulting output 
+.IR *raout " and " *decout " differ."
+The importance of 
+.I  tobs
+is furthur demonstrated in test case 3 in the PRECISION section.
+Coordinate computations were made  at grid line intersections defined
+by:
+RA 0 thru 360, by 1 degree increments;
+Dec=\|\-85 to +85 by 1 degree increments for first column;
+|\|dec\||\|=85 to 89 by 1 degree increments for second column.
+
+.PD 0
+.TP 15
+delta ra
+.RI "=  |\|" raout "("
+.BR gtjul2 " w/ "
+.IR tobs "=1983.5) \- " raout "(" 
+.BR gtjul2 " w/ "
+.IR tobs "=1950.0)\||"
+.TP 
+delta dec
+.RI "=  |\|" decout "("
+.BR gtjul2 " w/ "
+.IR tobs "=1983.5) \- decout("
+.BR gtjul2 " w/ "
+.IR tobs "=1950.0)\||"
+.PD 1
+.PP
+.nf
+.ta 2.2i,3.5i
+\0	|\|dec\||	|\|dec\||
+.ta 2.0i,3.3i
+\0	<85 deg.	85 to 89 deg.
+.ta 1.0i,2.2i,3.4i
+\0	max delta ra =	2.4478"	17.2710"
+\0	max delta dec=	\0 .2513"	\0\0.2271"
+.ta 1.4i,2.9i
+\0	max (delta ra)*cos(dec)=	.37787" for  |\|dec\|| <= 89 deg.
+\0	max (delta dec)        =	.25125" for  |\|dec\|| <= 89 deg.
+.fi
+.PD 1
+.PP
+.SH NOTE 2
+Re: THE IMPORTANCE OF SELECTING THE CORRECT ROUTINE, GTJUL2 OR GTJULP:
+.PP
+Since
+.B gtjulp
+with input proper motions equal to zero will not yield
+the same answer as
+.BR gtjul2 ","
+it is important to select the correct
+routine to process the position.
+.B  gtjulp
+produces non-zero output
+proper motions at J2000 when the B1950 proper motions are zero.
+This is consistent with the application of the time dependent portion
+of the equinox correction to proper motion in right ascension and the
+FK5-FK4 corrections and the change in precession constants as applied
+to proper motions in right ascension and declination.
+.PP
+.B  gtjul2
+is appropriate for objects whose proper motions are not known
+or are "intrinsically" zero, such as for radio sources.
+.B  gtjulp
+is appropriate for objects with explicitly known (e.g. published) proper
+motions regardless of the proper motion values.
+The differences between the results of
+.BR gtjul2 " and " gtjulp
+(with input of zero proper motion) are illustrated below.
+.PP
+Coordinate computations were made  at grid line intersections defined by
+.br
+RA 0 thru 360, by 1 degree increments;
+.br
+Dec=\|\-85 to +85 by 1
+degree increments for first column;  |\|dec\|| =\|85 to 89 by 1 degree
+increments for second column.
+.TP
+delta ra\0
+.RI "= |\|" raout "("
+.BR gtjulp " w/ "
+.IR pma "=" pmd "=0)  \- " raout "("
+.BR gtjul2 " w/ "
+.IR eqx "=" tobs "=1950)\||"
+.PD 0
+.TP
+delta dec
+.RI "= |\|" decout "("
+.BR gtjulp " w/ "
+.IR pma "=" pmd "=0) \- " decout "("
+.BR gtjul2 " w/ "
+.IR eqx "=" tobs "=1950)\||"
+.PD 1
+.PP
+.PD 0
+.nf
+.ta 2.2i,3.5i
+\0	|\|dec\||	|\|dec\||
+.ta 2.0i,3.3i
+\0	<85 deg.	85 to 89 deg.
+.ta 1.0i,2.2i,3.4i
+\0	max delta ra =	3.8795"	25.4242"
+\0	max delta dec=	\0.3757"	\0\0.3398"
+.ta 1.4i,2.9i
+\0	max (delta ra)*cos(dec)=	.56494" for  |\|dec\|| <= 89 deg.
+\0	max (delta dec)        =	.37573" for  |\|dec\|| <= 89 deg.
+.fi
+.PD 1
+.PP
+In addition,
+.B  gtjulp
+computed the following proper motions at J2000 for
+declination <= 89 degrees:
+.PP
+.RS +10
+|\|max(
+.IR pmaout ")\||  = 1.4869 sec\|/\|Julian century"
+.br
+|\|max(
+.IR pmdout ")\||  ="
+0.7515 "\|/\|Julian century
+.RE
+.SH NOTES
+The following information is provided to help avoid user-subroutine
+name conflicts:
+ 
+.BR gtjul2 " (and " gtjulp ")"
+call the following subroutines, which are
+included in the source file (gtjul2.f):
+gtecle, gtetrm, itere, iterec, jaddet, jclpos, jrmvet.
+In addition, the following routines are also required:
+ecleqx (with equecx, jgtobq), fk5prc (with fk5prp), nwcprc (with
+nwcprp), jgtfkc (with junfkc, jnitfk, jfk5bd, dintrp, dintr2).
+
+.SH C EXAMPLE 
+.RS -5
+.nf
+
+         C EXAMPLE FOR THE SUNS for gtjul2
+
+       #include <math.h>
+
+       main()
+       {
+       /* To convert a B1950.0 position to J2000.0, where proper motions */
+       /*    are not given;  with tobs = 1950.0  and E-term removal.     */
+       double eqx;
+       double ra;
+       double dec;
+       double tobs;
+       int ieflg;
+       double raout;
+       double decout;
+
+       /*  Input RA is 00h05m27.0s - put into decimal degrees:           */
+
+       ra = (0.0 + 5.0/60.0 + 27.0/3600.0) * 15.0;
+
+       /*  Input DEC is +71d44m36.0s - put into decimal degrees:         */
+
+       dec = + (71.0 + 44.0/60.0 + 36.0/3600.0);
+
+
+       eqx    = 1950.0;
+       tobs   = 1950.0;
+       ieflg  = 1;
+
+       gtjul2(eqx, ra, dec, tobs, ieflg, &raout, &decout);
+
+       /*  raout & decout will contain decimal degrees for equinox J2000 */
+      
+       }
+.fi
+.RE
+.SH FILES
+.TP 20
+libjbcvt.a
+Coordinate conversion/precession library
+.SH SEE ALSO
+jcnvc2(3C), jcnvp2(3C), unjul2(3C), fk5prc(3C), nwcprc(3C), j2000(3C) 
+.SH IDENTIFICATION
+Acknowledgement:
+.br
+These two subroutines are translated from libjbcvt.a FORTRAN
+library version 1.0, written by Judy Bennett. The description and C exmaple
+come from fk5prc(3F).
+
+Author:  Jing Li 
+.br
+Program date (latest version):  07 September 1995

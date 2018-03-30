@@ -1,0 +1,272 @@
+.TH gtjpa 3C "09 September 1995" "Version 1.0" "IPAC Tools"
+.SH NAME
+gtjpa, gtjpap - B1950 to J2000 coordinate and position angle conversion subroutines
+.SH SYNOPSIS
+.B  "gtjpa (\|eqx, ra, dec, pab, tobs, ieflg,"
+.br
+.B  "       raout, decout, paj, ierr)"
+.br
+.B  "int ieflg, *ierr;"
+.br
+.B  "double eqx, ra, dec, pab, tobs, *raout, *decout, *paj;"
+.br
+
+.B  "gtjpap (\|eqx, ra, dec, pab, pma, pmd, pin, vin, ieflg,"
+.br
+.B  "        raout, decout, paj, pmaout, pmdout, ierr)
+.br
+.B  "int ieflg, *ierr;"
+.br
+.B  "double eqx, ra, dec, pab, pma, pmd, pin, vin,"
+.br
+.B  "      *raout, *deout, *paj, *pmaout, *pmdout;"
+
+.PD 1
+.SH DESCRIPTION
+.BR gtjpa " and " gtjpap
+do accurate astronomical conversion of Besselian
+system (i.e. B1950) positions to the J2000.0 system where the
+objects associated position angle is also to be converted.
+The method used in these subroutines follows, in spirit, that which is 
+outlined in the FK5 Catalogue (1988) and is based on the IAU (1976)
+System of Astronomical Constants.
+The systematic correction
+"FK5-FK4" (with the exception of the portion of the correction that
+is a function of magnitude for mag. 1 through 7 stars) is applied by
+default.
+.PP
+.B  gtjpa 
+is a subroutine to convert Besselian (Newcomb) type positions
+and position angles to equator and equinox of J2000.0.
+.B  gtjpa
+converts radio source positions and other positions,
+from catalogs, for which no proper motion values are given.
+.BR gtjpa " returns the J2000 position and position angle in" 
+.IR raout ", " decout " and"
+.IR paj "." 
+An error indicator is returned in 
+.IR ierr "."
+The calling program must specify values for
+.IR eqx ", " ra ","
+.IR dec ", " pab ","
+.IR tobs " and  " ieflg "."
+.PP
+.B  gtjpap
+is a subroutine to convert Besselian (Newcomb) type positions,
+proper motions and position angles to equinox, equator
+and epoch of J2000.0.
+.B  gtjpap
+returns the position, position angle, and proper motions in
+.IR raout ", " decout ","
+.IR paj ", " pmaout " and"
+.IR pmdout "."
+An error indicator is returned in 
+.IR ierr "."
+The calling program must specify values for 
+.IR eqx ", " ra ","
+.IR dec ", " pab ","
+.IR pma ", " pmd ","
+.IR pin ", " vin " and"
+.IR ieflg "."
+.PP
+To reverse the process
+.B  unjpa
+may be used with the output of
+.BI gtjpa " (and " unjpap " with output of "
+.BI gtjpap ")."
+.PP
+Important Note:
+.BR gtjpa " is not interchangeable with " gtjpap "."
+The user must select the appropriate routine based on the type of
+position data to be converted.  A given B1950 right ascension and
+declination input to GTJPAP with proper motions of zero will not
+yield the same right ascension and declination at J2000 as
+.B  gtjpa 
+(where proper motions are "unknown" or "intrinsically zero").
+.B gtjpap
+produces non-zero output proper motions at J2000 when the
+B1950 proper motions are zero.
+This is consistent with the
+application of the time dependent portion of the equinox correction
+to proper motion in right ascension and the FK5-FK4 corrections and
+the change in precession constants as applied to proper motions in
+right ascension and declination.
+If the object's proper motions are
+"intrinsically" zero (e.g. for a radio source), then
+.BR gtjpa " must be used."
+.RB "Since " gtjpa " calls gtjul2 and "
+.BR gtjpap  " calls"
+gtjulp please see the 
+the gtjul2(3C) man page section labelled "NOTE 2".
+.PP
+All arguments are double precision except for
+.IR ieflg " and " *ierr ";"
+all angles are decimal degrees unless noted otherwise:
+.TP
+.I  eqx
+is the Besselian equinox of the input position
+(e.g. 1950.0 for B1950).
+.TP
+.I  ra
+is right ascension of the input position in decimal degrees
+(\|0.0  <=
+.IR ra "  <=  360.0\|)."
+.TP
+.I  dec
+is declination of the input position in decimal degrees
+(\|\-90.0  <=
+.IR dec "  <=  +90.0\|)."
+.TP
+.I  pab
+is input position angle (degrees east of north) at
+.IR eqx " (\|0.0  <="
+.IR pab "  < 360.0\|)."
+.TP
+.I  tobs
+is year (Besselian based) of observation, if known 
+(e.g. 1983.5). If unknown, use the value of 1950.0.
+If 0.0,
+.BR gtjpa " uses the value of"
+.IR eqx " for " tobs "."
+.IR tobs " is used by"
+.BR gtjpa " only; not used in " gtjpap "."
+.TP
+.I ieflg
+is integer flag allowing removal of E-terms of aberration:
+.br
+\01 = remove E-terms (
+.IR ieflg " should usually = 1)."
+.br
+\-1 = do not remove E-terms.
+.TP
+.I  *raout
+is output right ascension of position at equator and
+equinox of J2000.0
+(\|0.0  <=
+.IR *raout "  <=  360.0 decimal degrees, returned)."
+.TP                
+.I  *decout
+is output declination of position at equator and 
+equinox of J2000.0
+(\|\-90.0  <=
+.IR dec "  <=  +90.0 decimal degrees, returned)."
+.TP
+.I  *paj
+is output position angle (degrees east of north) at J2000.0 if
+.IR *ierr " is returned as 0 . (\|0.0  <=
+.IR *paj "  < 360.0)."
+.TP
+.I  *ierr
+is integer processing flag. 0 for normal return; 
+\-1 if
+.I  *paj
+could not be computed (usually because too close to a pole).
+.PP
+.RS +5
+The following additional arguments are for
+.BR gtjpap " only"
+.TP
+note:
+.IR tobs " is not part of the"
+.BR gtjpap " argument list;"
+.IR ra " and " dec " are assumed to be equinox and epoch of "
+.IR eqx ")"
+.RE
+.TP
+.I  pma
+is proper motion in ra in seconds of time per tropical century for
+.IR eqx "."
+.TP
+.I  pmd
+is proper motion in dec in seconds of arc per tropical century for
+.IR eqx "."
+.TP
+.I  pin
+is parallax in arc seconds (0.0 if unknown).
+.TP
+.I  vin
+is radial velocity in km/sec (0.0 if unknown).
+.TP
+.I  *pmaout
+is proper motion in ra in seconds of time per Julian
+century for J2000 (returned).
+.TP
+.I  *pmdout
+is proper motion in dec in seconds of arc per Julian
+century for J2000 (returned).
+.SH NOTES
+The following information is provided to help avoid user-subroutine
+name conflicts:
+.br
+.BR gtjpa " (and " gtjpap ") call the following subroutines:"
+gtjul2 (and gtjulp) and other routines included in the gtjul2.f
+file: gtecle, gtetrm, itere, iterec, jaddet, jclpos, jrmvet.
+In addition, the following routines are also required:
+ecleqx (with equecx, jgtobq), fk5prc (with fk5prp), nwcprc
+(with nwcprp), jbposa (with jpelpt).
+
+.SH C EXAMPLE
+.RS -5
+.nf
+
+         C EXAMPLE FOR THE SUNS for gtjpa
+
+       #include <math.h>
+
+       main()
+       {
+       /* To convert a B1950.0 position and position angle to J2000.0,  */
+       /*  where proper motions are not given.                          */
+       /*  Also where tobs = 1950.0 and E-terms are to be removed.        */
+
+       double eqx;
+       double ra;
+       double dec;
+       double pab;
+       double tobs;
+       int ieflg;
+       double raout;
+       double decout;
+       double paj;
+       int ierr;
+
+       eqx    = 1950.0;
+
+       /*  Input RA is 00h05m27.0s - put into decimal degrees:         */
+
+       ra = (0.0 + 5.0/60.0 + 27.0/3600.0) * 15.0;
+
+       /*  Input DEC is +71d44m36.0s - put into decimal degrees:       */
+
+       dec = + (71.0 + 44.0/60.0 + 36.0/3600.0);
+
+       pab    = 90.0;
+       tobs   = 1950.0;
+       ieflg  = 1;
+
+       gtjpa(eqx, ra, dec, pab, tobs, ieflg,
+             &raout, &decout, &paj, &ierr);
+
+       /*  raout & decout will contain decimal degrees for equinox J2000.*/
+       /*  paj will contain decimal deg. position angle if ierr = 0 on   */
+       /*   return.  Also see comment in FORTRAN example.                */
+
+       }
+.fi
+.RE
+.SH FILES
+.TP 20
+libjbcvt.a
+Coordinate conversion/precession library
+.SH SEE ALSO
+jcnvp2(3C), fk5prc(3C), nwcprc(3C), jbposa(3C), jbelpt(3C), j2000(3C)
+.SH IDENTIFICATION
+Acknowledgement: 
+.br
+These two subroutines are translated from libjbcvt.a FORTRAN
+library version 1.0, written by Judy Bennett. The description and C exmaple
+come from gtjpa(3F).
+
+Author:  Jing Li 
+.br
+Program date (latest version):  07 September 1995

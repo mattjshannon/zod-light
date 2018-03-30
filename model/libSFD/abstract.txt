@@ -1,0 +1,116 @@
+                                  Dust Maps
+
+                              Technical Summary
+
+  ------------------------------------------------------------------------
+              This is a summary for professional astronomers.
+                 It is similar to the abstract for Paper I.
+  ------------------------------------------------------------------------
+
+We present a full sky 100 micron map that is a reprocessed composite of the
+COBE/DIRBE and IRAS/ISSA maps, with the zodiacal foreground and confirmed
+point sources removed. Before using the ISSA maps, we remove the remaining
+artifacts from the IRAS scan pattern. Using the DIRBE 100 micron and 240
+micron data, we have constructed a map of the dust temperature, so that the
+100 micron map can be converted to a map proportional to dust column
+density. The dust temperature varies from 17 K to 21 K, which is modest but
+does modify the estimate of the dust column by a factor of 5. The result of
+these manipulations is a map with DIRBE-quality calibration and IRAS
+resolution. A wealth of filamentary detail is apparent on many different
+scales at all Galactic latitudes. In high latitude regions, the dust map
+correlates well with maps of HI emission, but deviations are coherent in the
+sky and are especially conspicuous in regions of saturation of HI emission
+toward denser clouds or the formation of H2 in molecular clouds. In
+contrast, high-velocity HI clouds are deficient in dust emission, also as
+expected.
+
+To generate the full sky dust maps, we must first remove zodiacal light
+contamination as well as a possible cosmic infrared background (CIB). This
+is done via a regression analysis of the 100 micron DIRBE map against the
+Leiden-Dwingeloo map of HI emission, with corrections for the zodiacal light
+via a suitable expansion of the DIRBE 25 micron flux. This procedure removes
+virtually all traces of the zodiacal foreground. For the 100 micron map no
+signficant CIB is detected, but in the 140 micron and 240 micron maps, where
+the zodiacal contamination is weaker, we detect the CIB at surprisingly high
+flux levels of 30 +/- 8 nW/m2/sr at 140\micron, and 16 +/- 3.4 nW/m2/sr at
+240 micron (95% confidence), which is an integrated flux approximately twice
+as large as measured for the Hubble Deep Field.
+
+The primary use of these maps is likely to be as a new estimator of Galactic
+extinction. To calibrate our maps, we assume a standard reddening law, and
+use the colors of elliptical galaxies to measure the reddening per flux
+density of 100 micron emission. We find consistent calibration using the
+(B-R) color distribution of a sample of 106 brightest cluster ellipticals,
+as well as a sample of 389 ellipticals with (B-V) and Mg2 index
+measurements. For the latter sample, we use the correlation of intrinsic B-V
+versus Mg linestrength to greatly tighten the power of the test. We
+demonstrate that the new maps are twice as accurate as the older
+Burstein-Heiles reddening estimates in regions of low and moderate
+reddening. The maps are expected to be significantly more accurate in
+regions of high reddening. These dust maps will also be useful for
+estimating millimeter emission that contaminates CMBR experiments and for
+estimating soft X-ray absorption.
+
+For more details, please download the full paper [see ApJ 500, 525, 1998
+and http://astro.berkeley.edu/davis/dust/index.html].
+
+  ------------------------------------------------------------------------
+Web page designers:
+David Schlegel, D.J.Schlegel@dur.ac.uk
+Douglas Finkbeiner, dfink@astro.berkeley.edu
+Adam Krigel, adamk@astro.berkeley.edu
+-------------------------------------------------------------------------------
+David Schlegel, Durham, 26 Jan 1998
+-------------------------------------------------------------------------------
+ 
+[Filters.txt]
+Extinction in Different Bandpasses
+----------------------------------
+   Assuming an R_V=3.1 extinction curve, the dust maps should be multiplied
+   by the value in the final column to determine the extinction in a given
+   passband.  The standard optical-IR bandpasses are represented by the CTIO
+   and UKIRT transmission curves.  For further details, see Appendix B of
+   the text.
+
+   Filter name       LamEff  A/A(V)   A/E(B-V
+   ----------------  ------  -------  -------
+   Landolt U           3372    1.664    5.434
+   Landolt B           4404    1.321    4.315
+   Landolt V           5428    1.015    3.315
+   Landolt R           6509    0.819    2.673
+   Landolt I           8090    0.594    1.940
+   CTIO U              3683    1.521    4.968
+   CTIO B              4393    1.324    4.325
+   CTIO V              5519    0.992    3.240
+   CTIO R              6602    0.807    2.634
+   CTIO I              8046    0.601    1.962
+   UKIRT J            12660    0.276    0.902
+   UKIRT H            16732    0.176    0.576
+   UKIRT K            22152    0.112    0.367
+   UKIRT L'           38079    0.047    0.153
+   Gunn g              5244    1.065    3.476
+   Gunn r              6707    0.793    2.590
+   Gunn i              7985    0.610    1.991
+   Gunn z              9055    0.472    1.540
+   Spinrad R           6993    0.755    2.467
+   APM b_J             4690    1.236    4.035
+   Stromgren u         3502    1.602    5.231
+   Stromgren b         4676    1.240    4.049
+   Stromgren v         4127    1.394    4.552
+   Stromgren beta      4861    1.182    3.858
+   Stromgren y         5479    1.004    3.277
+   Sloan u'            3546    1.579    5.155
+   Sloan g'            4925    1.161    3.793
+   Sloan r'            6335    0.843    2.751
+   Sloan i'            7799    0.639    2.086
+   Sloan z'            9294    0.453    1.479
+   WFPC2 F300W         3047    1.791    5.849
+   WFPC2 F450W         4711    1.229    4.015
+   WFPC2 F555W         5498    0.996    3.252
+   WFPC2 F606W         6042    0.885    2.889
+   WFPC2 F702W         7068    0.746    2.435
+   WFPC2 F814W         8066    0.597    1.948
+   DSS-II g            4814    1.197    3.907
+   DSS-II r            6571    0.811    2.649
+   DSS-II i            8183    0.580    1.893
+
