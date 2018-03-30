@@ -1,1 +1,0 @@
-Search.setIndex({filenames:["index"],titles:["Welcome to zod-light&#8217;s documentation!"],terms:{content:0,index:0,modul:0,search:0,page:0},objects:{},objtypes:{},objnames:{},titleterms:{welcom:0,zod:0,light:0,document:0,indic:0,tabl:0},envversion:43})
