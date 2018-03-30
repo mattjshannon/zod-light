@@ -18,7 +18,7 @@ Please note that the C code has been modified to account for a couple of bugs, h
 and
 ``model/ephem/sirtf.bsp``.
    - Note that these files are quite large (140MB and 225MB, respectively). They are linked here (in this repository) through the git-lfs (Large File Storage) service. However, if you do not have git-lfs installed (or if the bandwidth amount has been exceeded):
-   - Extract them from the ``ephem`` folder of the Spitzer-hosted (old) Zodiacal Light Model, which you can download from https://irsa.ipac.caltech.edu/data/SPITZER/docs/dataanalysistools/tools/contributed/general/zodiacallight/. Just dump them into the ``ephem`` folder of this repository.
+   - Extract them from the ``model/ephem/`` folder of the Spitzer-hosted (old) Zodiacal Light Model, which you can download from https://irsa.ipac.caltech.edu/data/SPITZER/docs/dataanalysistools/tools/contributed/general/zodiacallight/. Just dump them into the ``model/ephem/`` folder of this repository.
 
 3. Next, you need to *make* the ZL Model. To do so:
    - ``cd model``
