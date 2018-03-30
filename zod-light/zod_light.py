@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 automate.py
 
@@ -94,7 +95,7 @@ class Observation(object):
         """
 
         # CD ???
-        os.chdir("model")
+        os.chdir("../model")
 
         run_list = ['./BackgroundModel',
                     str(self.ra_decimal), str(self.dec_decimal),
@@ -103,7 +104,7 @@ class Observation(object):
         result = subprocess.run(run_list, stdout=subprocess.PIPE)
 
         # CD BACK???
-        os.chdir("..")
+        os.chdir("../zod-light")
 
         return result.stdout
 
