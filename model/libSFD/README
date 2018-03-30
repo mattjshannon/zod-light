@@ -1,0 +1,42 @@
+  sscdev1:/ssc/uplink/aire/iras649/libSFD/  for subroutine version of SFD 
+  interstellar dust map routiines (Schlegel).
+
+  Library of object modules for the SFD routines is in libjbSFD.a .
+
+  The following files have important information concerning use of
+  this subroutine package.
+
+     NOTES
+     README  (this file)
+     dust_getval_sub.c  -- has comments on how to call the routines and
+                           details on declarations.
+
+
+  Source may be compiled with either cc or gcc compiler.
+
+  Top level function is dust_getval_sub.  See .c file for comments on
+  how to use it.  There are 4 user-callable functions:
+
+    dust_getval_init MUST be called before any of the others.
+
+    dust_getval_sub (used to get values from Schlegel fits files)
+
+    trans_mask_bits (used only to translate fits files values if
+                     dust_getval_sub used to retrieve mask map values which
+                     are packed bit strings)
+                     
+    dust_getval_fini MUST be called before the main calling program
+                     exits so memory may be freed.
+
+
+ Also see testsub2.c for a brief sample.
+
+ Only the following 5 routines are required by the caller wishing to 
+ obtain the Schlegel dust map values and these may be compiled with cc or gcc:
+    dust_getval_sub.c
+    subs_lambert_serv.c
+    subs_fits.c
+    subs_memory.c
+    subs_inoutput.c
+        plus, the caller should include -lm for linkage.
+

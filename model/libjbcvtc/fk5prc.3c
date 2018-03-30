@@ -1,0 +1,192 @@
+.TH fk5prc 3C "7 September 1995" "Version 1.0" "IPAC Tools"
+.SH NAME
+fk5prc, fk5prp - Julian type coordinate system precession subroutines
+.SH SYNOPSIS
+.B "fk5prc (\|fromyr, rain, decin, toyear, raout, decout)"
+.br
+.B "double fromyr, rain, decin, toyear, *raout, *decout;"
+.br
+
+.\" the following break is required to keep manman from bein too creative:
+.B "fk5prp (\|fromyr, rain, decin, pmain, pmdin, pin, vin,"
+.br
+.B "        toyear, raout, decout, pmaou, pmdou)"
+.br
+.B "double fromyr, rain, decin, pmain, pmdin, pin, vin, 
+.br
+.B "       toyear, *raout, *decout, *pmaou, *pmdou;"
+
+.PD 1
+.SH DESCRIPTION
+.BR fk5prc " and " fk5prp
+subroutines do accurate astronomical precession between mean
+equinoxes (Julian) on equatorial positions.
+.BR fk5prc " handles precession of positions without proper motion values."
+.BR fk5prp " handles precession of positions that have proper motion values."
+
+The precession method
+and constants presented in The Fifth Fundamental Catalogue (FK5)
+Part I. by Frick,W., Schwan,H., Lederle,T. (1988) (pages 10-11)
+are used.  The precession is based on the IAU (1976) System of
+Astronomical Constants.
+.PP
+.B fk5prc
+returns the precessed position in
+.IR raout " and " decout "."
+The calling program must specify values for
+.IR fromyr ","
+.IR rain ","
+.IR decin ", and " toyear "."
+.PP
+.B fk5prp
+returns the precessed position in
+.IR raout " and " decout
+and the precessed proper motions in
+.IR pmaou " and " pmdou "."
+The calling program must specify values for
+.IR fromyr ","
+.IR rain ","
+.IR decin ","
+.IR pmain ","
+.IR pmdin ","
+.IR pin ","
+.IR vin ", and"
+.IR toyear "."
+
+All arguments are double precision:
+.TP
+.I fromyr
+is the equinox of the input position.  Double precision decimal year
+(e.g. 2000.0 for J2000).
+.TP
+.I rain
+is right ascension of the input position in decimal degrees.
+.RI "(0.0  <=  "   rain  "  <=  360.0)."
+.TP
+.I decin
+is declination of the input position in decimal degrees.
+.RI "(\-90.0  <=  "  decin  "  <=  +90.0)."
+.TP   
+.I toyear
+is equinox to which position is to be precessed.  Double
+precision decimal year (e.g. 1992.0 for J1992).
+.TP
+.I *raout 
+is output right ascension, in decimal degrees, of position at
+.I  toyear
+.RI "(0.0  <=   " *raout "  <=  360.0, returned)."
+.TP                
+.I *decout
+is output declination, in decimal degrees, of position at
+.I  toyear
+.RI "(\-90.0  <=  " *decout "  <=  +90.0, returned)."
+.PP
+.RS +5
+The following are additional arguments required for
+.BR  fk5prp "  only:"
+.br
+.RE
+.TP
+.I pmain
+is proper motion in ra in seconds of time per Julian
+century at
+.IR  fromyr "."
+.TP
+.I pmdin
+is proper motion in dec in seconds of arc per Julian
+century at
+.IR fromyr "."
+.TP
+.I pin
+is parallax in arc seconds (0.0 if not known).
+.TP 
+.I vin
+is radial velocity in km/sec (0.0 if not known).
+.TP
+.I *pmaou
+is proper motion in ra in seconds of time per Julian century at
+.IR toyear " (returned)."
+.TP
+.I *pmdou
+is proper motion in dec in seconds of arc per Julian century at
+.IR toyear " (returned)."
+ 
+.TP
+Note:
+fk5prc/fk5prp is for Julian equinoxes only.
+.br
+nwcprc/nwcprp is for Besselian equinoxes only.
+.br
+gtjul2/gtjulp or gtjpa/gtjpap may be used to convert from B1950 to J2000.
+.br
+unjul2/unjulp or unjpa/unjpap may be used to convert from J2000 to B1950.
+.br
+When no proper motions are involved jcnvc2 or jcnvp2 may be used to 
+precess and/or convert any position.
+
+.SH NOTES
+ 
+The following information is provided to help avoid user-subroutine
+name conflicts:
+ 
+fk5prc calls the following subroutine: fk5prp (included in the
+fk5prc source module).
+
+
+.SH C EXAMPLE 
+.RS -5
+.nf
+
+         C EXAMPLE FOR THE SUNS (USING fk5prc)
+
+       #include <math.h>
+
+       main()
+       {
+       /* To precess a J2000.0 position to J1992.0                      */
+       /*                                                               */
+       double fromyr;
+       double rain;
+       double decin;
+       double toyear;
+       double raout;
+       double decout;
+
+       /*  Input RA is 00h05m27.0s - put into decimal degrees:         */
+
+       rain = (0.0 + 5.0/60.0 + 27.0/3600.0) * 15.0;
+
+       /*  Input DEC is +71d44m36.0s - put into decimal degrees:       */
+
+       decin = + (71.0 + 44.0/60.0 + 36.0/3600.0);
+
+       fromyr = 2000.0;
+       toyear = 1992.0;
+
+       fk5prc(fromyr, rain, decin, toyear, &raout, &decout);
+
+       /*  raout & decout will contain decimal degrees.                */
+      
+       }
+
+.fi
+.RE
+.SH FILES
+.TP 20
+libjbcvt.a
+Coordinate conversion/precession library
+.SH SEE ALSO
+nwcprc(3C), gtjul2(3C), unjul2(3C), jcnvc2(3C), jcnvp2(3C), j2000(3C)
+
+.SH IDENTIFICATION
+
+Acknowledgement:  
+.br
+These two subroutines are translated from libjbcvt.a FORTRAN
+library version 1.0, written by Judy Bennett. The description
+and C exmaple come from fk5prc(3F).
+.br
+
+Author: Jing Li 
+.br
+Last Program Change: 7 September 1995

@@ -1,0 +1,195 @@
+.TH nwcprc 3C "07 September 1995" "Version 1.0" "IPAC TOOLS"
+.SH NAME
+nwcprc, nwcprp - Besselian (aka Newcomb or pre-IAU 1976) coordinate precession subroutines
+.SH SYNOPSIS
+.B  "nwcprc (\|fromyr, rain, decin, toyear, raout, decout)"
+.br
+.B  "double fromyr, rain, decin, toyear, *raout, *decout;"
+.br
+
+.B  "nwcprp (\|fromyr, rain, decin, pmain, pmdin, pin, vin,"
+.br
+.B  "        toyear, raout, decout, pmaou, pmdou)"
+.br
+.B  "double fromyr, rain, decin, pmain, pmdin, pin, vin,"
+.br
+.B  "       toyear, *raout, *deout, *pmaou, *pmdou;"
+.br
+
+.PD 1
+.SH DESCRIPTION
+.BR nwcprc " and " nwcprp
+subroutines do accurate astronomical precession between mean
+Besselian equinoxes (Newcomb) on equatorial positions and optionally,
+proper motions.
+.PP
+The precession method presented in The Fifth
+Fundamental Catalogue (FK5) Part I. by Frick,W., Schwan,H., Lederle,T.
+(1988) (pages 10-11) is used.
+The precession constants are those of
+the Herget general precession method (Publications of the Cincinnati
+Observatory No. 24 (1973), page 6).
+This program supersedes jprecj
+that used the same precession constants, but did not handle proper
+motions within its rotation matrix.
+.B  nwcprp
+includes proper motions (when present) in its calculations.
+.B  nwcprp
+with input proper motions
+equal to zero will yield the same answer for right ascension and
+declination as
+.B  nwcprc
+since only precession (and no conversion) is involved.
+.PP
+.B  nwcprc
+returns the precessed position in 
+.IR *raout " and " *decout "."
+The calling program must specify values for
+.IR fromyr ", " rain ","
+.IR decin " and " toyear "."
+.PP
+.B nwcprp
+returns the precessed position in
+.IR *raout " and " *decout 
+and the precessed proper motions in 
+.IR pmaou " and " pmdou "."
+The calling program must specify values for
+.IR fromyr ", " rain ","
+.IR decin ", " pmain ","
+.IR pmdin ", " pin ","
+.IR vin " and " toyear "."
+.PP
+All arguments are double precision:
+.TP
+.I  fromyr
+is the equinox of the input position.  Double precision decimal year
+(e.g. 1950.0 for B1950).
+.TP
+.I  rain
+is right ascension of the input position in decimal degrees
+.RI "(0.0  <= "  rain "  <=  360.0)."
+.TP
+.I  decin
+is declination of the input position in decimal degrees
+.RI "(\-90.0  <=  " decin "  <=  +90.0)."
+.TP
+.I  toyear
+is the equinox to which position is to be precessed.
+Double precision decimal year (e.g. 1983.5 for B1983.5)
+.TP
+.I  *raout 
+is output right ascension, in decimal degrees,  of position at
+.I toyear
+.RI "(0.0  <=  " *raout "  <=  360.0, returned)."
+.TP                
+.I  *decout
+is output declination, in decimal degrees, of position at
+.I  toyear
+.RI "(\-90.0  <=  " *decout "  <=  +90.0, returned)."
+.PP
+.RS +5
+The following are additional arguments required for
+.BR nwcprp " only:"
+.br
+.RE
+.TP
+.I  pmain
+is proper motion in ra in seconds of time per tropical century at
+.IR fromyr "."
+.TP
+.I  pmdin
+is proper motion in dec in seconds of arc per tropical century at
+.IR fromyr "."
+.TP
+.I  pin
+is parallax in arc seconds (0.0 if not known).
+.TP
+.I  vin
+is radial velocity in km/sec (0.0 if not known).
+.TP
+.I  *pmaou
+is proper motion in ra in seconds of time per tropical century at
+.IR toyear " (returned)."
+.TP
+.I  *pmdou
+is proper motion in dec in seconds of arc per tropical century at
+.IR toyear " (returned)."
+ 
+.TP
+Note:
+nwcprc/nwcprp is for Besselian equinoxes only.
+.br
+fk5prc/fk5prp is for Julian equinoxes only.
+.br
+gtjul2/gtjulp or gtjpa/gtjpap may be used to convert from B1950 to J2000.
+.br
+unjul2/unjulp or unjpa/unjpap may be used to convert from J2000 to B1950.
+.br
+When no proper motions are involved jcnvc2 or jcnvp2 may be used to 
+precess and/or convert any position.
+
+
+.SH NOTES
+ 
+ The following information is provided to help avoid user-subroutine
+ name conflicts:
+.B  nwcprc
+calls the following subroutine:
+.B  nwcprp
+(included in the nwcprc.c source module).
+
+.SH C EXAMPLE
+.RS -5
+.nf
+         C EXAMPLE FOR THE SUNS (USING NWCPRC)
+
+       #include <math.h>
+
+       main()
+       {
+       /* To precess a B1950.0 position to B1983.5                      */
+       /*                                                               */
+       double fromyr;
+       double rain;
+       double decin;
+       double toyear;
+       double raout;
+       double decout;
+
+       /*  Input RA is 00h05m27.0s - put into decimal degrees:         */
+
+       rain = (0.0 + 5.0/60.0 + 27.0/3600.0) * 15.0;
+
+       /*  Input DEC is +71d44m36.0s - put into decimal degrees:       */
+
+       decin = + (71.0 + 44.0/60.0 + 36.0/3600.0);
+
+       fromyr = 1950.0;
+       toyear = 1983.5;
+
+       nwcprc(fromyr, rain, decin, toyear, &raout, &decout);
+
+       /*  raout & decout will contain decimal degrees.                */
+      
+
+
+       }
+.fi
+.RE
+.SH FILES
+.TP 20
+libjbcvt.a
+Coordinate conversion/precession libary
+.SH SEE ALSO
+fk5prc(3C), gtjul2(3C), unjul2(3C), jcnvc2(3C), jcnvp2(3C), j2000(3C)
+.SH IDENTIFICATION
+Acknowledgement: 
+.br
+These two subroutines are translated from libjbcvt.a FORTRAN
+library version 1.0, written by Judy Bennett. The description and C exmaple
+come from nwcprc(3F).
+.br
+
+Author:  Jing Li 
+.br
+Program date (latest version):  07 September 1995

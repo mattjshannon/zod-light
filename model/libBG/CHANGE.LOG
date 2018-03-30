@@ -1,0 +1,85 @@
+  16May2000: renamed jun1999 zkernel.c to zkernel.c_wrong and the
+     jun1999 library module libjbBG.a to libjbBG.a_wrong after the
+     discovery of the wrong Albedo model equations in get_Alb in
+     the June 1999 version of zkernel.c .   j.bennett
+  16May2000:
+    In zkernel.c --
+     Changed function get_Alb to correct albedo computation per Bill
+     Reach's update.
+  18May2000:
+    In zkernel.c --
+     Updated wavelength value of "1.2" in get_Alb to "1.25" per 
+     Bill Reach's request.
+    In scattfunc.c --
+     Updated function solar_sp to return value of 0.0 when input
+     argument to function is less than the value in w[0].
+
+  06March2002 -- The March/April C code changes are to accommodate changes made
+                 to the zody algorithm, in the IDL code, by Bidushi Bhattacharya.
+                 The changes allow the LOS (line-of-sight) to start at SIRTF
+                 instead of at Earth.
+    In zdata_s.h --
+      Updated structure, zdata_s, to include year.
+
+    In get_zmod.c --
+      Updated file to include comments from new IDL version of get_zmod.pro +
+      Updated arg. to mk_zdata to include and use integer year +
+      Updated zpar array to use new values from most recent IDL file
+        zpar_fd5.xdr .
+
+  11March2002
+    In earthsun.c --
+     Updated comment to include those in  new IDL version of earthsun
+     in zkernel_nopartial.pro,   Updated three constants.  Did not
+     implement computation of _sirtf here (seem not be be used + do not
+     use any values presently in this routine).
+
+  14March2002
+    Removed get_days.c and fproot.c (called only by get_days.c) from this
+    directory, since no longer used by background estimator.
+    Updated Makefile.
+    Removed get_bg_minmax.c and get_mnxz.c. Minmax funcs will be handled by server. 
+    Appended (for a local static version) julday() from ~/clib/julday.c
+              onto get_bg.c).
+    Updated get_bg.c routine get_bg().
+    Updated earthsun.c and get_zmod.c (both functions get new arg. lists).
+    Added include file sirtfd_s.h to package.
+
+  15March2002
+    Updated some comments in get_zmod.c .
+    Updated, in the file zkernel.c, the following functions:
+      zcloud
+      migband
+      solring
+      zkernel
+
+  20Mar-22Apr2002
+    Ongoing changes and updates to bg routines.
+    Added sirtfsun.c - calls get_s_vals() and fills sirtfdata structure.
+    Added get_cspi.c - contains get_s_vals() version that uses cspice to
+                       get sirtf ephemeris.
+    Added get_s_va.c that has get_s_vals() version to read HORIZONS file for 
+     sirtf ephemeris for a local (non-JAVA/SPOT) version of sirtf_bg. This is
+     linked using lksirtf_bg.bat and not placed in the .a library of /libBG/ .
+
+  18Jun2002
+    get_s_va.c  (for sirtf_bg and command line zody) :
+      updated interpolation of elon where elon goes from close to 360 to
+      close to zero.
+
+  19Jun2002
+    zkernel.c, function solring() updated to agree with new idl version
+          (june2002).
+
+  19Jun2002
+     Note: days from launch not needed. What is needed in earthsun() is
+           julian day no. of obs., so that the no. of days between the hard-coded
+           earth lon. value date and observation date may be computed to
+           get the value of earth lon. on the observation date.
+    earthsun.c updated: jd (for julian day) argument added, and 
+           Earth_Mean_Lon computation updated to be like new idl version.
+           Included adding the julian day number for Jan 9, 2003 (came
+           from HORIZON file) so # days from earth lon ref. value can
+           be computed. Value agrees with IDL ver. earthsun of 21jun02.
+    get_bg.c   updated: to call earthsun with additional argument jd .
+               (note: jd was already being computed in get_bg() )

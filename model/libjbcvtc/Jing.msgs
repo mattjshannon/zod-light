@@ -1,0 +1,61 @@
+From: jing
+Date: Tue, 26 Mar 1996 17:25:04 -0800
+Message-Id: <199603270125.RAA22847@lewis>
+To: booth
+Subject: new coordinate conversion codes
+
+
+Booth,
+
+I fixed two pieces of code in the C version of Judy's library: gtjul2.c and 
+jcnvp2.c, so that the variables iway and japply are initialized correctly. 
+
+They are in lewis:/home/jing/Cconv_1.0_test
+
+Thanks,
+Jing
+
+Date: Tue, 26 Mar 1996 20:17:55 -0800 (PST)
+From: Booth Hartley <booth>
+Message-Id: <199603270417.UAA26510@holmes.ipac.caltech.edu>
+To: jing
+Subject: Re: new coordinate conversion codes
+
+Jing -
+
+Sorry for the earlier message sent in error.
+
+I got this message from you:
+> 
+> Booth,
+> 
+> I fixed two pieces of code in the C version of Judy's library: gtjul2.c and 
+> jcnvp2.c, so that the variables iway and japply are initialized correctly. 
+> 
+> They are in lewis:/home/jing/Cconv_1.0_test
+> 
+> Thanks,
+> Jing
+> 
+
+I found file gtjul2.c fixed nicely.  But file jcnvp2.c looks unchanged.
+Also, file jgtfkc.c looks changed, even though you didn't mention it.  
+Did you enter the wrong filenames?
+
+Booth
+
+
+From: jing
+Date: Wed, 27 Mar 1996 10:02:48 -0800
+Message-Id: <199603271802.KAA22945@lewis>
+To: booth
+Subject: Re: new coordinate conversion codes
+
+
+Booth,
+
+oops ..., I clicked the wrong file for the email -- I meant the jgtfkc.c 
+instead of jcnvp2.c. Sorry for the confusion!  
+
+Jing
+

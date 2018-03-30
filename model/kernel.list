@@ -1,0 +1,17 @@
+\begintext 
+    These are the kernels which I want to load
+\begindata
+
+
+PATH_VALUES  = (
+		 'ephem',
+		 'ephem'
+		 )
+PATH_SYMBOLS = ( 'A',
+		 'B',
+		 )
+KERNELS_TO_LOAD = ( '$A/leapseconds.ker',
+		    '$A/de.bsp',
+		    '$B/sirtf.bsp',
+		    )
+

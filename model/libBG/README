@@ -1,0 +1,31 @@
+  Modules in this libBG directory have been changed to incorporate
+  June2002 changes -- from Bidushi Bhattacharya's IDL changes.
+  Feb2002 changes -- from Bidushi Bhattacharya's IDL changes.
+  Also see ../demo/ for demonstration routines.
+
+ README file for libBG subdirectory:
+
+ Library for non-SFD background estimation modules is in libjbBG.a .
+
+ Dependencies:  Routines in libjbBG call routines in the 
+   ../libSFD/libjbSFD.a library.
+   Routines in the IPAC coordinate conversion library, libjbcvtc.a,
+   are also required.
+   For installation in the Server where cspice is to be used:
+     Caller must open the ephemeris file and also provide a C-callable
+     routine
+     "  int background_elat(double julday, double *elon, double *elat,
+                            double *range) "  where returned elon and elat
+     are heliocentric ecliptic longitude and latitude in degrees and
+     r is distance in AU.
+   The cspice library must be included in the linkage. (For testing the
+     /ssc/uplink/sut/booth/NAIF/cspice/lib/cspice.a  library was used).
+   Also -lm must be included in all linkages.
+
+ For demo program see ../demo/sirtf_bgx (uses cspice). 
+   Note: sirtf_bgx is simply sirtf_bg.o linked with cspice stuff instead
+         of HORIZONS file reader. lksirtf_bgx.bat illustrates the linkage.
+
+ See get_bg.c in this dir for comments on how to use the get_bg package.
+    Note:  all ra and dec inputs to get_bg must be equinox J2000.
+

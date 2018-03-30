@@ -1,0 +1,248 @@
+.TH jcnvc2 3C "07 September 1995" "Version 1.0" "IPAC Tools"
+.SH NAME
+jcnvc2 - general coordinate system conversion and precession subroutine
+.SH SYNOPSIS
+.B  "jcnvc2 (\|jsysin, eqx1, xlonin, xlatin,"
+.br
+.B  "        jsysou, eqx2, xlonou, xlatou, tobs)"
+.br
+.B  "int jsysin, jsysou;"
+.br
+.B  "double eqx1, xlonin, xlatin,"
+.br
+.B  "       eqx2, *xlonou, *xlatou, tobs;"
+
+.PD 1
+.SH DESCRIPTION
+.B  jcnvc2
+converts and/or precesses astronomical coordinates from one
+coordinate system to another.
+Conversion between any combination
+of equatorial (Julian), equatorial (Besselian), galactic, ecliptic
+(Julian), ecliptic (Besselian) and supergalactic coordinate systems
+may be performed.
+.B jcnvc2
+is, in fact, a generalized driver
+subroutine that provides a standardized argument list for the most
+frequently used conversions and precessions.
+The user may need to call upon the more specialized routines
+(which allow more special\-purpose tailoring) when the defaults used by
+.B  jcnvc2
+are not appropriate.
+See ASSUMPTIONS in this man page for details.
+.PP
+.B jcnvc2
+returns the precessed and/or converted positions in
+.IR *xlonou " and " *xlatou "."
+The calling program must specify values for
+.IR jsysin ","
+.IR eqx1 ","
+.IR xlonin ","
+.IR xlatin ","
+.IR jsysou " and "
+.IR eqx2 "."
+
+All floating point arguments are double precision:
+.TP
+.I  jsysin
+is integer code for coordinate system of input position.
+.PD 0
+.PP
+.nf
+.ta 0.5i,1.3i,3.6i
+	Codes:	\00 = equatorial (Julian)	\03 = ecliptic (Besselian)
+	\0	\01 = equatorial (Besselian)  	\04 = supergalactic
+	\0	\02 = galactic               	13 = ecliptic (Julian)
+.fi
+.PD 1
+.TP
+.I eqx1
+is equinox (double precision decimal year; e.g. 1950.0) of
+.IR xlonin ", " xlatin " (ignored if"
+.IR jsysin " is 2 or 4)."
+.br
+.RI "If " jsysin " = 0 or 13 and " eqx1 " = 0.0, 2000.0 is used;"
+.br
+.RI "If " jsysin " = 1 or  3 and " eqx1 " = 0.0, 1950.0 is used."
+.TP
+.I  xlonin
+is longitude (or right ascension) of input position in      
+.I jsysin
+coordinate system.
+Double precision decimal degrees (\|0.0  <=
+.IR  xlonin "  <=  360.0\|)."
+.TP
+.I xlatin
+is latitude (or declination) of input position in 
+.I jsysin
+coordinate system.
+Double precision decimal degrees (\|\-90.0  <=
+.IR  xlatin "  <=  +90.0\|)."
+.TP
+.I  jsysou
+is code for coordinate system of output position. 
+.PD 0
+.PP
+.nf
+.ta 0.5i,1.3i,3.6i
+	Codes:	\00 = equatorial (Julian)	\03 = ecliptic (Besselian)
+	\0	\01 = equatorial (Besselian)  	\04 = supergalactic
+	\0	\02 = galactic               	13 = ecliptic (Julian)
+.fi
+.PD 1
+.TP
+.I  eqx2
+is equinox (double precision decimal year; e.g. 2000.0) of
+.IR xlonin ", " xlatin " (ignored if"
+.IR jsysou "  = 2 or 4)"
+.br
+.RI "If " jsysou " = 0 or 13 and " eqx2 " = 0.0, 2000.0 is used;"
+.br
+.RI "If " jsysou " = 1 or  3 and " eqx2 " = 0.0, 1950.0 is used."
+.TP
+.I  *xlonou
+is longitude (or right ascension) of output position in 
+.IR jsysou " coordinate system."
+Double precision decimal degrees (\|0.0  <=
+.IR *xlonou "  <=  360.0, returned\|)."
+.TP               
+.I  *xlatou
+is latitude (or declination) of output position in 
+.IR jsysou " coordinate system."
+Double precision decimal degrees (\|\-90.0  <=
+.IR *xlatou "  <=  +90.0, returned\|)."
+.TP
+.I  tobs
+is observation epoch (used only when conversion
+between Julian and Besselian systems is requested
+or implied (galactic and supergalactic conversions from
+equatorial or ecliptic imply Besselian; therefore
+if Julian input, conversion is first done to Besselian).
+.RI "If " tobs " = 0.0, " tobs " of 1950.0 is used if applicable."
+
+.SH ASSUMPTIONS
+
+The following defaults are used by
+.BR jcnvc2 ":"
+.PP
+1. Proper motions are not handled by
+.B jcnvc2
+and if such handling is
+required, the routines gtjul2/gtjulp, unjul2/unjulp, fk5prc/fk5prp and
+nwcprc/nwcprp may be of help.
+The  gtjul2/gtjulp 
+man page section labelled "NOTE 2" (Re: THE IMPORTANCE OF SELECTING THE CORRECT
+ROUTINE, GTJUL2 OR GTJULP) is recommended reading when accurate
+conversions between Besselian and Julian systems are desired.
+.B jcnvc2
+uses only gtjul2 (and unjul2) for such conversions.
+.PP
+.RB "2. " jcnvc2
+assumes E-terms of aberration are present in Besselian
+equatorial and ecliptic positions and that they are not present in
+Julian equatorial and ecliptic positions.
+.PP
+.RB "3. " jcnvc2
+assumes that the systematic correction "FK5-FK4" (with
+the exception of the portion of the correction that is a function of
+magnitude for mag. 1 through 7 stars) is present in Julian positions
+and not present in Besselian positions.
+
+.SH NOTES
+
+The following information is provided to help avoid user-subroutine
+name redundancies.
+.B  jcnvc2
+calls the following subroutines:
+.br
+
+gtjul2, unjul2, fk5prc, nwcprc, ecleqx (with equecx, jgtobq), galeqd
+(with equgad, galsgl, sglgal), jgtfkc (with junfkc, jnitfk, jfk5bd,
+dintrp, dintr2).  gtjul2/unjul2 module contains the following
+subroutines: gtecle, gtetrm, itere, iterec, jaddet, jclpos and jrmvet.
+
+
+.SH USAGE NOTE 1
+Re: Converting IRAS Faint Source Survey J2000 positions back to B1950
+.PP
+The FSS J2000 positions, produced May 1992, used a version of
+the IPAC conversion routine that did not incorporate the FK5-FK4
+systematic corrections.  To compute the original B1950 input from these
+J2000 coordinates, the user must set a flag to indicate FK5-FK4
+corrections are to be ignored.  In the calling program, include the 
+following statements for this special case:
+
+.br
+             extern int japply;
+.br
+        note - japply default value is 1; change value to 0 for FSS:
+.br
+             japply = 0;
+
+
+.SH C EXAMPLE
+.RS -5
+.nf
+
+        C EXAMPLE FOR THE SUNS for jcnvc2
+
+       #include <math.h>
+
+       main()
+       {
+       /*  Convert a J2000. position in the equatorial system to the    */
+       /*  equivalent position in the galactic system.                 */
+
+       int    jsysin;
+       double eqx1;
+       double xlonin;
+       double xlatin;
+       int    jsysou;
+       double eqx2;
+       double xlonou;
+       double xlatou;
+       double tobs;
+
+       /*  Equatorial input RA is 00h05m27.0s - put into decimal degrees: */
+
+       xlonin = (0.0 + 5.0/60.0 + 27.0/3600.0) * 15.0;
+
+       /*  Equatorial input DEC is +71d44m36.0s - put into decimal degrees:*/
+
+       xlatin = + (71.0 + 44.0/60.0 + 36.0/3600.0);
+
+       /*  Set jsysin to Julian equatorial code with eqx1 = 2000.      */
+       jsysin = 0;
+       eqx1   = 2000.0;
+
+       /*  Set jsysou to galactic code, set eqx2 & tobs to defaults    */
+       jsysou = 2;
+       eqx2   = 0.0;
+       tobs   = 0.0;
+
+       jcnvc2(jsysin, eqx1, xlonin, xlatin,
+              jsysou, eqx2, &xlonou, &xlatou, tobs);
+
+       /* xlonou & xlatou will contain double precision decimal degrees. */
+
+       }
+.fi
+.RE
+.SH FILES
+.TP 20
+libjbcvt.a
+Coordinate conversion/precession library
+.SH SEE ALSO
+jcnvp2(3C), fk5prc(3C), nwcprc(3C), gtjul2(3C), unjul2(3C), j2000(3C)
+
+.SH IDENTIFICATION
+Acknowledgement: 
+.br
+This subroutine is translated from libjbcvt.a FORTRAN
+library version 1.0, written by Judy Bennett. The description and C exmaple
+come from jcnvc2(3F).
+.br
+
+Author:  Jing Li 
+.br
+Program date (latest version):  07 September 1995

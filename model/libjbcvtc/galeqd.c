@@ -1,0 +1,494 @@
+#include <math.h>
+
+galeqd(xl,xb,rad,decd)
+double xl, xb, *rad, *decd;
+{     
+/*
+* galeqd,equgad,sglgal,galsgl subroutines moved from jcnvcd.f file to galeqd.f
+*   on 14sep92 - no changes to code, itself, made (code same as 17jan91)
+*
+* galeqd (modifcation of galequ) requires double prec. args (22oct90)
+*
+****  entry equcor(xl,xb,rad,decd)   obsolete entry pt equcor.
+* 22mar85 for hepvax (changed darsin to dasin;removed entry equcor)
+* 17mar82 updated so has more sensible name- galequ, but still
+*   retains alias for equcor.
+* 02oct80  jdb   29jan81 to input dtor,rtod to more places. 22apr81
+* subroutine to compute earth equatorial coords from galactic coords
+* inputs: xl l in degrees, xb b in degrees.
+* b = galactic latitude (-90. to + 90. deg);l=galactic longitude(0-360)
+* outputs: rad ra in degrees, decd dec in degrees.
+*  x = cos(b)*cos(l)
+*  y = sin(l)*cos(b)
+*  z = sin(b)
+*  gal <==> equ equations from tom soifer.  see also:
+*   Classical Mechanics by Herbert Goldstein (Addison-Wesley Publ.Co.,
+*     c.1950, 7th printing 1965) Section 4-4 on Eulerian Angles (p.107-109)
+*
+* assumes gal north pole at 12h 49.0m, +27d24' (192.25d,+27.4d)
+*         gal (0, 0) at     17h 42.4m, -28d55' (265.36d,-28.91d)
+*   also: delta=lat=0 at gal (33d,0d) ; equ (282.25d,0d).
+*
+*/
+
+      static int nthru = 0;
+      static double dtor, rtod, a[3], b[3], c[3];
+
+      double xlr,xbr,cosb,cosl,sinl,x,y,z,sind,
+             cosd,decr,rar,eq2,eq3,cosa,sina;
+      double cosph,sinph,cosps,sinps,costh,sinth;
+      double psi=-33.0, theta=62.6, phi=282.25;
+
+      if(nthru == 0) 
+      {
+         dtor = atan(1.0) / 45.0;
+         rtod = 1.0 / dtor;
+
+
+/*                         compute matrix for gal ==> equ conversion:*/
+
+         cosps = cos(psi*dtor);
+         sinps = sin(psi*dtor);
+         cosph = cos(phi*dtor);
+         sinph = sin(phi*dtor);
+         costh = cos(theta*dtor);
+         sinth = sin(theta*dtor);
+
+/* |  b[0]  b[1]  b[2]  |
+ * |  c[0]  c[1]  c[2]  |
+ * |  a[0]  a[1]  a[2]  |
+ * */
+         b[0] = cosps*cosph - costh*sinph*sinps;
+         b[1] = -(sinps*cosph) - costh*sinph*cosps;
+         b[2] = sinth*sinph;
+
+         c[0] = cosps*sinph + costh*cosph*sinps;
+         c[1] = -(sinps*sinph) + costh*cosph*cosps;
+         c[2] = -(sinth*cosph);
+
+         a[0] = sinth*sinps;
+         a[1] = sinth*cosps;
+         a[2] = costh;
+
+         nthru = 1;
+      }
+
+      xlr = xl * dtor;
+      xbr = xb * dtor;
+      cosb = cos(xbr);
+      cosl = cos(xlr);
+      sinl = sin(xlr);
+      z    = sin(xbr);
+      x = cosb*cosl;
+      y = sinl*cosb;
+      sind = a[0]*x + a[1]*y + a[2]*z;
+      if(fabs(sind)>=1.0)
+      {
+         sind = sind/fabs(sind);
+         decr = asin(sind);
+         rar = 0.0;
+      }
+
+      else
+      {
+	 eq2  = b[0]*x + b[1]*y + b[2]*z;
+         eq3  = c[0]*x + c[1]*y + c[2]*z;
+         decr = asin(sind);
+         cosd = sqrt(1.0-sind*sind);
+         cosa = eq2/cosd;
+         sina = eq3/cosd;
+         if(fabs(cosa)>1.0) cosa = cosa/fabs(cosa);
+         if(fabs(sina)>1.0) sina = sina/fabs(sina);
+         rar = atan2(sina,cosa);
+      }
+
+      *rad  = rar * rtod;
+      if(*rad < 0.0) *rad = 360.0 + *rad;
+      *decd = decr * rtod;
+      if(fabs(*decd) >= 90.0) 
+      {
+         *rad = 0.0;
+         if(*decd >  90.0) *decd =  90.0;
+         if(*decd < -90.0) *decd = -90.0;
+      }
+
+      return 0;
+
+}
+
+equgad(rad,decd,xl,xb)
+double rad, decd, *xl, *xb;
+{
+/*
+* equgad (modification of equgal) requires double prec. args (22oct90)
+*
+* 22mar85 for hepvax (darsin changed to dasin;entry galcor removed)
+**    entry galcor(rad,decd,xl,xb)
+* 17mar82 updated for more sensible name- equgal, while retaining
+*     alias for old name of galcor.
+* 02oct80 jdb:subroutine to compute galactic coords from earth
+*  equatorial coords.29jan81 for more places in dtor,rtod.22apr81
+*  gal <==>equ equations from tom soifer.  see also:
+*   Classical Mechanics by Herbert Goldstein (Addison-Wesley Publ.Co.,
+*     c.1950, 7th printing 1965) Section 4-4 on Eulerian Angles (p.107-109)
+* assumes gal north pole at 12h 49.0m, +27d24' (192.25d,+27.4d)
+*         gal (0, 0) at     17h 42.4m, -28d55' (265.36d,-28.91d)
+*   also: delta=lat=0 at gal (33d,0d) ; equ (282.25d,0d).
+*
+* inputs: rad ra in degrees, decd is dec in degrees.
+* b = galactic latitude (-90. to + 90. deg);l=galactic longitude(0-360)
+*
+*  x = cos(alpha)*cos(delta)
+*  y = sin(alpha)*cos(delta)
+*  z = sin(delta)
+*  eq1 = sin(b) = -.8676*x - .1884*y + .4602*z
+*  eq2 = cos(b)*cos(l) = -.0669*x - .8728*y - .4835*z
+*  eq3 = cos(b)*sin(l) = +.4927*x - .4503*y + .7446*z
+*    b = arsin(sin(b))
+*  cos(b) = sqrt(1.-sin(b)*sin(b))
+*  cos(l) = eq2/cos(b)
+*  sin(l) = eq3/cos(b)
+*  l = atan2(sin(l)/cos(l): if(l.lt.0) l = l+2*pi if radians.
+*
+*/
+
+   static int nthru = 0;
+   static double dtor, rtod, a[3],b[3],c[3];
+   double rar,decr,cosa,sina,cosd,x,y,z,cosb,
+          sinb,eq2,eq3,xbr,xlr,cosl,sinl;
+   double cosph,sinph,cosps,sinps,costh,sinth;
+   double psi=-33.0, theta=62.6, phi=282.25;
+
+   if(nthru == 0)
+   {
+      dtor = atan(1.0) / 45.0;
+      rtod = 1.0 / dtor;
+
+/*                         compute matrix for equ ==> gal conversion: */
+
+      cosps = cos(psi*dtor);
+      sinps = sin(psi*dtor);
+      cosph = cos(phi*dtor);
+      sinph = sin(phi*dtor);
+      costh = cos(theta*dtor);
+      sinth = sin(theta*dtor);
+/*
+* |  b[1]  b[2]  b[3]  |
+* |  c[1]  c[2]  c[3]  |
+* |  a[1]  a[2]  a[3]  |
+*
+*/
+      b[0] = cosps*cosph - costh*sinph*sinps;
+      b[1] = cosps*sinph + costh*cosph*sinps;
+      b[2] = sinps*sinth;
+
+      c[0] = -(sinps*cosph) - costh*sinph*cosps;
+      c[1] = -(sinps*sinph) + costh*cosph*cosps;
+      c[2] =  cosps*sinth;
+
+      a[0] = sinth*sinph;
+      a[1] = -(sinth*cosph);
+      a[2] = costh;
+
+      nthru = 1;
+   }
+
+
+      rar  = rad * dtor;
+      decr = decd * dtor;
+      cosa = cos(rar);
+      sina = sin(rar);
+      cosd = cos(decr);
+      z    = sin(decr);
+      x = cosa*cosd;
+      y = sina*cosd;
+      sinb = a[0]*x+ a[1]*y + a[2]*z;
+      if(fabs(sinb)>=1.0) 
+      {
+         sinb = sinb/fabs(sinb);
+         xbr =  asin(sinb);
+         xlr = 0.0;
+      }
+      else
+      {
+         eq2  = b[0]*x + b[1]*y + b[2]*z;
+         eq3  = c[0]*x + c[1]*y + c[2]*z;
+         xbr =  asin(sinb);
+         cosb = sqrt(1.0-sinb*sinb);
+         cosl = eq2/cosb;
+         sinl = eq3/cosb;
+         if(fabs(cosl)>1.0) cosl = cosl/fabs(cosl);
+         if(fabs(sinl)>1.0) sinl = sinl/fabs(sinl);
+         xlr = atan2(sinl,cosl);
+      }
+
+      *xl = xlr * rtod;
+      if(*xl < 0.0) *xl = 360.0 + *xl;
+      *xb = xbr * rtod;
+      if(fabs(*xb) >= 90.0) 
+      {
+         *xl = 0.0;
+         if(*xb >  90.0) *xb =  90.0;
+         if(*xb < -90.0) *xb = -90.0;
+      }
+      return 0;
+
+}
+
+galsgl(rad,decd,xl,xb)
+double rad,decd,*xl,*xb;
+{
+/*
+*
+* galsgl (modification of equgad) to compute supergalactic coordinates
+*  from galactic coordinates.  j.bennett  30oct-05nov90
+*
+* inputs: rad =  gal lon (l) in degrees. double precision.
+*         decd = gal lat (b) in degrees. double precision.
+* returned:
+* xb = supergalactic latitude  (SGB)  (-90. to + 90. deg). double precision.
+* xl = supergalactic longitude (SGL)  (0-360. deg). double precision.
+*
+*  Computed values of rotation used for the Eulerian angles:
+*   phi = 137.37 deg.;  theta = 83.68 deg.;  psi = 0. deg.
+*    Based on gal l,b = 137.37, 0 deg. at sg SGL,SGB = 0., 0. and
+*         SG North Pole (0,+90) at gal l,b = 47.37, +6.32 deg.
+*
+* References:
+* de Vaucouleurs,G., A. de Vaucouleurs, and G.H.Corwin,
+*  Second Reference Catalog of Bright Galaxies, (1976), p.8
+*
+* Tully,B., Nearby Galaxies Catalog, (1988) p. 1,4-5
+* 
+*    Note: de Vaucouleurs gives gal l,b 137.29, 0 for SGL,SGB= 0,0;
+*          this is not 90 degrees from Galactic North Pole.- used
+*          Tully's value of 137.37, 0 deg.
+*
+*  gal <==> equ equations from tom soifer.  see also:
+*   Classical Mechanics by Herbert Goldstein (Addison-Wesley Publ.Co.,
+*     c.1950, 7th printing 1965) Section 4-4 on Eulerian Angles
+*     (p.107-109)
+*    note: such equations also appropriate for gal <==> sgl .
+*          See code below for def. of arrays a,b,c.
+*  x = cos(lon)*cos(lat)
+*  y = sin(lon)*cos(lat)
+*  z = sin(lat)
+*  eq1 = sin(sgb)          =   a(1)*x +  a(2)*y +  a(3)*z
+*  eq2 = cos(sgb)*cos(sgl) =   b(1)*x +  b(2)*y +  b(3)*z
+*  eq3 = cos(sgb)*sin(sgl) =   c(1)*x +  c(2)*y +  c(3)*z
+*  sgb = arsin(sin(sgb))
+*  cos(sgb) = sqrt(1.-sin(sgb)*sin(sgb))
+*  cos(sgl) = eq2/cos(sgb)
+*  sin(sgl) = eq3/cos(sgb)
+*  sgl = atan2(sin(sgl)/cos(sgl): if(sgl.lt.0) sgl = sgl+2*pi if radians.
+*
+*/
+
+   static int nthru=0;
+   static double dtor, rtod, a[3],b[3],c[3];
+   double rar,decr,cosa,sina,cosd,x,y,z,cosb,
+          sinb,eq2,eq3,xbr,xlr,cosl,sinl;
+   double cosph,sinph,cosps,sinps,costh,sinth;
+   double psi= 0.0, theta = 83.68, phi = 137.37;
+
+   if(nthru == 0) 
+   {
+      dtor = atan(1.0) / 45.0;
+      rtod = 1.0 / dtor;
+
+/*                         compute matrix for equ ==> gal conversion: */
+      cosps = cos(psi*dtor);
+      sinps = sin(psi*dtor);
+      cosph = cos(phi*dtor);
+      sinph = sin(phi*dtor);
+      costh = cos(theta*dtor);
+      sinth = sin(theta*dtor);
+/*
+* |  b[0]  b[1]  b[2]  |
+* |  c[0]  c[1]  c[2]  |
+* |  a[0]  a[1]  a[2]  |
+*/
+      b[0] = cosps*cosph - costh*sinph*sinps;
+      b[1] = cosps*sinph + costh*cosph*sinps;
+      b[2] = sinps*sinth;
+
+      c[0] = -(sinps*cosph) - costh*sinph*cosps;
+      c[1] = -(sinps*sinph) + costh*cosph*cosps;
+      c[2] =  cosps*sinth;
+
+      a[0] = sinth*sinph;
+      a[1] = -(sinth*cosph);
+      a[2] = costh;
+
+      nthru = 1;
+   }
+
+
+      rar  = rad * dtor;
+      decr = decd * dtor;
+      cosa = cos(rar);
+      sina = sin(rar);
+      cosd = cos(decr);
+      z    = sin(decr);
+      x = cosa*cosd;
+      y = sina*cosd;
+      sinb = a[0]*x + a[1]*y + a[2]*z;
+      if(fabs(sinb)>=1.0)
+      {
+         sinb = sinb/fabs(sinb);
+         xbr =  asin(sinb);
+         xlr =  0.0;
+      }
+      else
+      {
+         eq2  = b[0]*x + b[1]*y + b[2]*z;
+         eq3  = c[0]*x + c[1]*y + c[2]*z;
+         xbr  =  asin(sinb);
+         cosb = sqrt(1.0-sinb*sinb);
+         cosl = eq2/cosb;
+         sinl = eq3/cosb;
+         if(fabs(cosl)>1.0) cosl = cosl/fabs(cosl);
+         if(fabs(sinl)>1.0) sinl = sinl/fabs(sinl);
+         xlr = atan2(sinl,cosl);
+      }
+
+      *xl  = xlr * rtod;
+      if(*xl < 0.0) *xl = 360.0 + *xl;
+      *xb = xbr * rtod;
+      if(fabs(*xb) >= 90.0)
+      {
+         *xl = 0.0;
+         if(*xb >  90.0) *xb =  90.0;
+         if(*xb < -90.0) *xb = -90.0;
+      }
+   return 0;
+}
+
+sglgal(xl,xb,rad,decd)
+double xl, xb, *rad, *decd;
+{
+/*
+*
+* sglgal (modification of galeqd) to compute galactic coordinates
+*  from supergalactic coordinates.  j.bennett  30oct-05nov90
+*
+* inputs:
+* xb = supergalactic latitude  (SGB)  (-90. to + 90. deg). double precision.
+* xl = supergalactic longitude (SGL)  (0-360. deg). double precision.
+* returned: rad =  gal lon (l) in degrees. double precision.
+*           decd = gal lat (b) in degrees. double precision.
+*
+*  Computed values of rotation used for the Eulerian angles:
+*   phi = 137.37 deg.;  theta = 83.68 deg.;  psi = 0. deg.
+*    Based on gal l,b = 137.37, 0 deg. at sg SGL,SGB = 0., 0. and
+*         SG North Pole (0,+90) at gal l,b = 47.37, +6.32 deg.
+*
+* References:
+* de Vaucouleurs,G., A. de Vaucouleurs, and G.H.Corwin,
+*  Second Reference Catalog of Bright Galaxies, (1976), p.8
+*
+* Tully,B., Nearby Galaxies Catalog, (1988) p. 1,4-5
+* 
+*    Note: de Vaucouleurs gives gal l,b 137.29, 0 for SGL,SGB= 0,0;
+*          this is not 90 degrees from Galactic North Pole.- used
+*          Tully's value of 137.37, 0 deg.
+*
+*  gal <==> equ equations from tom soifer.  see also:
+*   Classical Mechanics by Herbert Goldstein (Addison-Wesley Publ.Co.,
+*     c.1950, 7th printing 1965) Section 4-4 on Eulerian Angles
+*     (p.107-109)
+*    note: such equations also appropriate for gal <==> sgl .
+*          See code below for def. of arrays a,b,c.
+*  x = cos(sgb)*cos(sgl)
+*  y = sin(sgl)*cos(sgb)
+*  z = sin(sgb)
+*  eq1 = sin(lat)          =   a(1)*x +  a(2)*y +  a(3)*z
+*  eq2 = cos(lat)*cos(lon) =   b(1)*x +  b(2)*y +  b(3)*z
+*  eq3 = cos(lat)*sin(lon) =   c(1)*x +  c(2)*y +  c(3)*z
+*  sgb = arsin(sin(lat))
+*  cos(lat) = sqrt(1.-sin(lat)*sin(lat))
+*  cos(lon) = eq2/cos(lat)
+*  sin(lon) = eq3/cos(lat)
+*  lon = atan2(sin(lon)/cos(lon): if(lon.lt.0) lon = lon+2*pi if radians.
+*
+*/
+   static int nthru=0;
+   static double dtor, rtod, a[3],b[3],c[3];
+   double xlr,xbr,cosb,cosl,sinl,x,y,z,sind,
+          cosd,decr,rar,eq2,eq3,cosa,sina;
+   double cosph,sinph,cosps,sinps,costh,sinth;
+   double psi=0.0, theta=83.68, phi=137.37;
+
+   if(nthru == 0)
+   {
+      dtor = atan(1.0) / 45.0;
+      rtod = 1.0 / dtor;
+
+/*                         compute matrix for gal ==> equ conversion: */
+
+      cosps = cos(psi*dtor);
+      sinps = sin(psi*dtor);
+      cosph = cos(phi*dtor);
+      sinph = sin(phi*dtor);
+      costh = cos(theta*dtor);
+      sinth = sin(theta*dtor);
+/*
+* |  b[0]  b[1]  b[2]  |
+* |  c[0]  c[1]  c[2]  |
+* |  a[0]  a[1]  a[2]  |
+*/
+      b[0] = cosps*cosph - costh*sinph*sinps;
+      b[1] = -(sinps*cosph) - costh*sinph*cosps;
+      b[2] = sinth*sinph;
+
+      c[0] = cosps*sinph + costh*cosph*sinps;
+      c[1] = -(sinps*sinph) + costh*cosph*cosps;
+      c[2] = -(sinth*cosph);
+
+      a[0] = sinth*sinps;
+      a[1] = sinth*cosps;
+      a[2] = costh;
+
+      nthru = 1; 
+   }
+
+
+      xlr = xl * dtor;
+      xbr = xb * dtor;
+      cosb = cos(xbr);
+      cosl = cos(xlr);
+      sinl = sin(xlr);
+      z    = sin(xbr);
+      x = cosb*cosl;
+      y = sinl*cosb;
+      sind = a[0]*x + a[1]*y + a[2]*z;
+      if(fabs(sind)>=1.0)
+      {
+         sind = sind/fabs(sind);
+         decr =  asin(sind);
+         rar = 0.0;
+      }
+
+     else
+     {
+        eq2  = b[0]*x + b[1]*y + b[2]*z;
+        eq3  = c[0]*x + c[1]*y + c[2]*z;
+        decr = asin(sind);
+        cosd = sqrt(1.0-sind*sind);
+        cosa = eq2/cosd;
+        sina = eq3/cosd;
+        if(fabs(cosa)>1.0) cosa = cosa/fabs(cosa);
+        if(fabs(sina)>1.0) sina = sina/fabs(sina);
+        rar = atan2(sina,cosa);
+     }
+     *rad  = rar * rtod;
+     if(*rad < 0.0) *rad = 360.0 + *rad;
+     *decd = decr * rtod;
+     if(fabs(*decd) == 90.0) 
+     {
+        *rad = 0.0;
+        if(*decd >  90.0) *decd =  90.0;
+        if(*decd < -90.0) *decd = -90.0;
+     }
+     return 0;
+}

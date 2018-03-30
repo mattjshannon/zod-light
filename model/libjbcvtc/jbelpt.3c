@@ -1,0 +1,156 @@
+.TH jbelpt 3C "07 September 1995" "Version 1.0" "IPAC Tools"
+.SH NAME
+jbelpt - Compute position using reference position, position angle and distance
+.SH SYNOPSIS
+.B  "jbelpt (\|xlon0, xlat0, distd, pa, xlon1, xlat1, ipf)"
+.br
+.B  "int *ipf;"
+.br
+.B  "double xlon0, xlat0, distd, pa, *xlon1, *xlot1;"
+
+.PD 1
+.SH DESCRIPTION
+.B  jbelpt
+is a subroutine to compute the position of a point described by
+a reference (or central) position, position angle and
+the offset distance between the two positions.
+.B  jbelpt
+returns output position in 
+.IR xlon1 " and " xlat1 "."
+A process-information flag is returned in 
+.IR *ipf "."
+The calling program must provide values for
+.IR xlon0 ", " xlat0 ","
+.IR distd " and " pa "."
+.PP
+All arguments are double precision except for
+.IR ipf ";"
+all angles are decimal degrees:
+.TP
+.I  xlon0
+is longitude, in decimal degrees,  of reference point or central
+point of error ellipse; 
+.RI "0.0  <=  " xlon0 "  <=  360.0."
+.RI "Also see " xlat0 " explanation."
+.TP
+.I  xlat0
+is latitude, in decimal degrees, of reference point or central
+point of error ellipse;
+.RI "\-90.0  <=  " xlat0 "  <=  +90.0."
+If return value of
+.IR *ipf " is 3, " xlat0 " was treated as pole (with"
+.IR xlon0 " treated as 0.).
+.br
+Note:
+.IR xlon0 ", " xlat0 " will not be changed by"
+.BR jbelpt "."
+.TP
+.I  distd
+is distance, in degrees, between 2 positions;
+.RI "0.0  < " distd "  <  90.0."
+.TP
+.I  pa
+is input position angle in degrees east of north.
+.br
+.RI "Range:  0.0  <=  " pa "  <=  360.0."
+.TP
+.I  *xlon1
+is longitude, in decimal degrees, of a point (e.g. at a vertex of an error
+ellipse);
+.RI "0.0  <=  " *xlon1 "  <=  360.0., returned."
+.RI "Also see " *xlat1 " explanation."
+.TP
+.I  *xlat1
+is latitude, in decimal degrees, of a point (e.g. at a vertex of an error
+ellipse);  
+.RI "\-90.0  <=  " *xlat1 "  <=  +90.0., returned."
+If return value of
+.IR *ipf " = 4,"
+.RI "(" *xlon1 ",\|" *xlat1 ") should be treated as pole"
+.RI "(with " *xlon1 " treated as 0.) in any furthur computations."
+.br
+Note:
+.IR *xlon1 ",\|" *xlat1 " may not be set at pole on return when"
+.IR *ipf " = 4."
+.TP
+.I  *ipf
+is processing flag (returned):
+.br
+.RS +5
+.TP
+0 =
+.I  distd
+too small (new point = old point on return).
+.TP
+1 =
+completely "normal" processing; 
+.IR *xlon1 ", " *xlat1
+will contain the computed position.
+.TP
+2 =
+.I  pa
+too small (teated as though 
+.IR pa " = 0.0) or " pa
+actually is zero (which is okay).
+.TP
+3 =
+input
+.IR xlon0 ",\|" xlat0 " treated as pole (at 0.,+/\-90.)"
+If more computations are to be done, calling program
+should probably change position to be pole.
+.TP
+4 =
+output
+.IR *xlon1 ",\|" *xlat1 " should be treated as pole (at 0.,+/\-90.)."
+If more computations are to be done, calling
+program should probably change position to be pole.
+.RE
+.SH NOTES
+The following information is provided to help avoid user-subroutine
+name conflicts.
+.PP
+.IR jbelpt " is contained in the " jbposa " module."
+
+.SH C EXAMPLE
+.nf
+  C EXAMPLE FOR THE SUNS (USING jbelpt)
+
+#include <math.h>
+
+main()
+{
+
+       int    ipf;
+       double xlon0;
+       double xlat0;
+       double distd;
+       double pa;
+       double xlon1;
+       double xlat1;
+
+       xlon0 = 252.0;
+       xlat0 = +31.0;
+       distd = 0.1;
+       pa    = 90.0;
+
+       jbelpt(xlon1, xlat1, distd, pa, &xlon0, &xlat0, &ipf);
+
+}
+.fi
+.SH FILES
+.TP 20
+libjbcvt.a
+Coordinate conversion/precession library
+.SH SEE ALSO
+jbposa(3C)
+.SH IDENTIFICATION
+Acknowledgement:
+.br
+This subroutine is translated from libjbcvt.a FORTRAN
+library version 1.0, written by Judy Bennett. The description and C exmaple
+come from jbelpt(3F).
+.br
+
+Author: Jing Li 
+.br
+Program date (latest version):  07 September 1995

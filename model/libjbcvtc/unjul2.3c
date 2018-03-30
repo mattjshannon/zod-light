@@ -1,0 +1,233 @@
+.TH unjul2 3C "07 September 1995" "Version 1.0" "IPAC Tools"
+.SH NAME
+unjul2, unjulp - J2000 to B1950 coordinate conversion subroutines
+.SH SYNOPSIS
+.B "unjul2 (\|ra, dec, tobs, ieflg, eqx, raout, decout)"
+.br
+.B "int ieflg;"
+.br
+.B "double ra, dec, tobs, eqx, *raout, *decout;"
+.br
+
+.B "unjulp (\|ra, dec, pma, pmd, pin, vin, ieflg, reserv,"
+.br
+.B "        raout, decout, pmaout, pmdout)"
+.br
+.B "int ieflg;"
+.br
+.B "double ra, dec, pma, pmd, pin, vin, reserv,"
+.br
+.B "       *raout, *decout, *pmaout, *pmdout;"
+
+.PD 1
+.SH DESCRIPTION
+.RB "The " unjul2 " and " unjulp
+subroutines do accurate astronomical conversion of J2000.0
+system positions to the Besselian (e.g. B1950.) system.
+The method used in these subroutines undoes the conversion done by 
+gtjul2 and gtjulp.
+It is assumed that the systematic "FK5-FK4"
+correction (excluding the portion of the correction that is a
+function of magnitude) was applied in computing the J2000.0 position
+and such correction is to be removed now.
+.PP
+.B unjul2
+is a subroutine to convert J2000.0  positions to Besselian
+(Newcomb) type positions.
+.BR unjul2 " undoes what gtjul2 does." 
+.B  unjul2
+converts radio source positions and other positions,
+from catalogs, for which no proper motion values are given.
+.B  unjul2
+returns the Besselian-type position in 
+.IR *raout " and " *decout "."
+The calling program must specify values for
+.IR ra ", " dec "," 
+.IR tobs ", " ieflg " and"
+.IR eqx "."
+.PP
+.B  unjulp
+is a subroutine to convert J2000.0 positions and proper motions
+to Besselian (Newcomb) type positions and proper motions.
+.BR unjulp " undoes what gtjulp does. "
+.B  unjulp
+returns the B1950 position and proper motions in
+.IR *raout ", " *decout ","
+.IR pmaout " and " pmdout."
+The calling program must specify values for
+.IR ra ", " dec ","
+.IR pma ", " pmd ","
+.IR pin ", " vin " and"
+.IR ieflg "."
+.PP
+Important Note:
+.BR unjul2 " is not interchangeable with " unjulp "."
+For more explanation, please see the gtjul2(3C) man page.
+.PP
+All arguments are double precision except for
+.IR ieflg "; all angles are decimal degrees unless noted otherwise":
+.TP
+.I  ra
+is right ascension of the J2000.0 input position,in decimal
+degrees, to be converted (\|0.0  <=
+.IR ra "  <=  360.0\|)."
+.TP
+.I  dec
+is declination of the J2000.0 input position, in decimal degrees,
+to be converted (\|\-90.0  <=
+.IR dec "  <=  +90.0\|)."
+.TP
+.I tobs
+is year (Besselian based) of observation, if known 
+(e.g. 1983.5). If unknown, use the value of 1950.0.
+If 0.0.
+.BR unjul2 " uses the value of"
+.IR eqx " for " tobs "."
+.IR tobs " is used by"
+.BR unjul2 " only; not used in " unjulp "."
+.TP
+.I  ieflg
+is integer flag allowing replacement of E-terms of aberration:
+.br
+\01 = replace E-terms
+.RI "(" ieflg " should usually = 1)."
+.br
+\-1 = do not replace E-terms.
+.TP
+.I  eqx
+is the Besselian equinox for the output position (e.g. 1950.0 for B1950).
+.TP
+.I  *raout
+is output right ascension of position at
+.I  eqx 
+.RI "(\|0.0  <= " *raout "  <=  360.0 decimal degrees, returned)."
+.TP                
+.I  *decout
+is output declination of position at
+.I  eqx
+.RI "(\|\-90.0  <= " *decout "  <=  +90.0 degrees, returned)."
+.PP
+.RS +5
+The following additional arguments are for
+.BR unjulp " only"
+.TP
+note:
+.IR tobs " and " eqx " are not part of the"
+.BR unjulp " argument list;"
+.IR *raout " and " *decout " will be B1950."
+.br
+.RE
+.TP
+.I  pma
+is proper motion in ra in seconds of time per Julian
+century at J2000.
+.TP
+.I  pmd
+is proper motion in dec in seconds of arc per Julian
+century at J2000.
+.TP
+.I  pin
+is parallax in arc seconds (0.0 if unknown).
+.TP
+.I  vin
+is radial velocity in km/sec (0.0 if unknown).
+.TP
+.I  reserv
+is a double precision reserved argument; presently ignored.
+.TP
+.I  *pmaout
+is proper motion in ra in seconds of time per tropical
+century (returned) at B1950.
+.TP
+.I  *pmdout
+is proper motion in dec in seconds of arc per tropical
+century (returned) at B1950.
+
+.SH NOTES
+The following information is provided to help avoid user-subroutine
+name conflicts:
+
+.BR unjul2 "(and " unjulp ")"
+call the following subroutines, which are
+included in the source file of gtjul2.f:
+gtecle, gtetrm, itere, iterec, jaddet, jclpos, jrmvet.
+          
+In addition, the following routines are also required:
+ecleqx (with equecx, jgtobq), fk5prc (with fk5prp), nwcprc (with
+nwcprp), and junfkc (with jnitfk, jfk5bd, jgtfkc, dintrp, dintr2).
+
+.SH USAGE NOTE
+Re: Converting IRAS Faint Source Survey J2000 positions back to B1950
+.PP
+The FSS J2000 positions, produced May 1992, used a version of
+the IPAC conversion routine that did not incorporate the FK5-FK4
+systematic corrections.
+To compute the original B1950 input from these
+J2000 coordinates, the user must set a flag to indicate FK5-FK4
+corrections are to be ignored.
+In the calling program, include the 
+following statements for this special case:
+
+.br
+            extern int japply;
+.br
+       note - japply default value is 1; change value to 0 for FSS:
+.br
+            japply = 0
+
+.SH C EXAMPLE
+.RS -5
+.nf
+         C EXAMPLE FOR THE SUNS for unjul2
+
+       #include <math.h>
+
+       main()
+       {
+       /* To convert a J2000.0 position to B1950.0 where proper motions */
+       /*     are not given.  tobs = 1950.0; E-terms are to be replaced.*/
+
+       double eqx;
+       double ra;
+       double dec;
+       double tobs;
+       int ieflg;
+       double raout;
+       double decout;
+
+       /*  Input RA is 00h05m27.0s - put into decimal degrees:         */
+
+       ra = (0.0 + 5.0/60.0 + 27.0/3600.0) * 15.0;
+
+       /*  Input DEC is +71d44m36.0s - put into decimal degrees:       */
+
+       dec = + (71.0 + 44.0/60.0 + 36.0/3600.0);
+
+       eqx    = 1950.0;
+       tobs   = 1950.0;
+       ieflg  = 1;
+
+       unjul2(ra, dec, tobs, ieflg, eqx, &raout, &decout);
+
+       /*  raout & decout will contain decimal degrees.                */
+
+       }
+.fi
+.RE
+.SH FILES
+.TP 20
+libjbcvt.a
+Coordinate conversion/precession library
+.SH SEE ALSO
+jcnvc2(3C), jcnvp2(3C), gtjul2(3C), fk5prc(3C), nwcprc(3C), j2000(3C)
+.SH IDENTIFICATION
+Acknowledgement: 
+.br
+These two subroutines are translated from libjbcvt.a FORTRAN
+library version 1.0, written by Judy Bennett. The description and C exmaple
+come from unjul2(3F).
+.br
+
+Author: Jing Li
+.br
+Program date (latest version):  07 September 1995

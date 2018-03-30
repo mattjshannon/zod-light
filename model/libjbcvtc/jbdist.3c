@@ -1,0 +1,109 @@
+.TH jbdist 3C "07 September 1995" "Version 1.0" "IPAC Tools"
+.SH NAME
+jbdist - Compute distance between two astronomical positions
+.SH SYNOPSIS
+.B  "jbdist (\|lon1, lat1, lon2, lat2, distd)"
+.br
+.B  "double lon1, lat1, lon2, lat2, *distd;"
+
+.PD 1
+.SH DESCRIPTION
+.B  jbdist
+computes the distance between two astronomical positions.
+.B jbdist
+returns the distance in 
+.IR distd "."
+.PP
+The celestial distance between two positions is computed using the 
+following formula:
+.TP
+Theta =
+acos( (cos(lat1)*cos(lat2)*cos(lon1\-lon2)) +
+.br
+      (sin(lat1)*sin(lat2)) )
+.TP
+Where:
+Theta = distance
+.br
+lat1\0 = latitude of position 1
+.br
+lat2\0 = latitude of position 2
+.br
+lon1\0 = longitude of position 1
+.br
+lon2\0 = longitude of position 2
+.br
+.PP
+All arguments are double precision decimal degrees:
+.TP
+.I lon1
+is longitude of position 1
+.RI "(\|0.0  <=  " lon1 "  <=  360.0 degrees)."
+.TP
+.I  lat1
+is latitude of position 1
+.RI "(\|\-90.0  <=  " lat1 "  <=  +90.0 degrees)."
+.TP
+.I  lon2
+is longitude of position 2
+.RI "(\|0.0  <=  " lon2 "  <=  360.0 degrees)."
+.TP
+.I  lat2
+is latitude of position 2
+.RI "(\|\-90.0  <=  " lat2 "  <=  +90.0 degrees)."
+.TP
+.I  *distd
+is distance in double precision degrees
+.RI "(\|0.0  <=  " *distd "  <=  180.0, returned).
+
+.SH NOTES
+Routines 
+.B jbdist
+and jbposa may not give exactly the  same answer
+for distance when the distance is small.
+jbposa, under some
+conditions, uses another algorithm for small distances.
+
+.SH C EXAMPLE
+.RS -5
+.nf
+
+        C EXAMPLE FOR THE SUNS (USING jbdist)
+
+       #include <math.h>
+
+       main()
+       {
+       double xlon1;
+       double xlat1;
+       double xlon2;
+       double xlat2;
+       double distd;
+
+       xlon1 = 320.0;
+       xlat1 = 21.0;
+       xlon2 = 330.0;
+       xlat2 = 22.0;
+
+       jbdist(xlon1, xlat1, xlon2, xlat2, &distd);
+
+       /*  distd will contain distance in degrees                     */
+
+       }
+.fi
+.RE
+.SH FILES
+.TP 20
+libjbcvt.a
+Coordinate conversion/precession library
+.SH IDENTIFICATION
+Acknowledgement:
+.br
+This subroutine is translated from libjbcvt.a FORTRAN
+library version 1.0, written by Judy Bennett. The description and C exmaple
+come from jbdist(3F).
+.br
+
+Author: Jing Li 
+.br
+Program date (latest version):  07 September 1995

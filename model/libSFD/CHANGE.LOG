@@ -1,0 +1,13 @@
+ 10dec1999: updated function lambert_getval_serv in subs_lambert_serv.c
+            so the get_bg_fini (that calls dust_getval_fini, that calls
+            lambert_getval_serv) may be called multiple times.
+            Old subs_lambert_serv.c renamed to subs_lambert_serv.c_old .
+            Old libjbSFD.a renamed libjbSFD.a_old.
+ 10dec1999 p.m.: Change to dust_getval_sub.c to make more technically
+           correct -- probably will not help "fini" problem.
+ 13dec1999: More cleanup in subs_lambert_serv.c.  Cleaner, but previous
+           (10dec1999 version) should work fine with present operating
+           system.
+ 04feb2000: Updated subs_inoutput.h so that longer path names could be
+            specified for the fits file directories. Changed values for
+            MAX_FILE_NAME_LEN and IO_FORTRAN_FL from 80 to 256 .
