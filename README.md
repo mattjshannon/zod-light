@@ -20,6 +20,16 @@ And here's an example of how some observations can be dominated by zodiacal ligh
 
 ![Example use of zodiacal estimate](/docs/images/fig6.png)
 
+# What you'll need to use this tool
+Essentially, all you need to know is when your Spitzer observation was taken and where (in RA, Dec) the telescope was pointed. Specifically, you'll want the following information before you proceed (for each observation in which you want an output mid-IR spectrum):
+   - year
+   - month
+   - day
+   - right ascension (in HMS or degrees)
+   - declination (in HMS or degrees)
+   
+# Typical outputs
+
 # Installation
 1. First, download this repository. Your best bet is to just clone it. From the terminal:
    - ``git clone https://github.com/mattjshannon/zod-light.git``
