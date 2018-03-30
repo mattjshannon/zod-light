@@ -1,3 +1,5 @@
+[![Documentation Status](https://readthedocs.org/projects/zod-light/badge/?version=latest)](http://zod-light.readthedocs.io/en/latest/?badge=latest)
+
 # zod-light
 A tool for estimating Galactic zodiacal light emission for Spitzer Space Telescope observations.
 
