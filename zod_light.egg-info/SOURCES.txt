@@ -1,7 +1,0 @@
-README.md
-zod_light/__init__.py
-zod_light/zod_light.py
-zod_light.egg-info/PKG-INFO
-zod_light.egg-info/SOURCES.txt
-zod_light.egg-info/dependency_links.txt
-zod_light.egg-info/top_level.txt
