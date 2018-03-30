@@ -11,7 +11,7 @@ Please note that the C code has been modified to account for a couple of bugs, h
 
 # Installation
 1. First, download this repository. Your best bet is to just clone it. From the terminal:
-``git clone https://github.com/mattjshannon/zod-light.git``
+   - ``git clone https://github.com/mattjshannon/zod-light.git``
 
 2. Next, you need to ensure that you have the **ephem** data, i.e.,
 ``model/ephem/de.bsp``
