@@ -13,7 +13,6 @@ import time
 from astropy import units as u
 from astropy.coordinates import SkyCoord
 from concurrent.futures import ProcessPoolExecutor
-from ipdb import set_trace as st
 
 
 class Observation(object):
