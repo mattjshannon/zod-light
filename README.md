@@ -9,6 +9,27 @@ https://irsa.ipac.caltech.edu/data/SPITZER/docs/dataanalysistools/tools/contribu
 
 Please note that the C code has been modified to account for a couple of bugs, hence why the C code itself is included here (all rights of the C model remain with the authors as mentioned above).
 
+# Typical use case
+A common use for this package is to determine the zodiacal light towards a given position (RA, Dec) during a Spitzer observation. For instance, in [Shannon et al. (2018)][http://adsabs.harvard.edu/abs/2018ApJ...855...32S] we examined diffuse background emission from the Galactic bulge region. Since we were only interested in the background itself (and not the on-star observations), no background-subtraction was performed. Depending on how close to the Galactic center one looks, the zodiacal light can be an important if not dominant component of the mid-infrared continuum.
+
+For instance, here is an estimate of the zodiacal light continuum from the paper (using this tool):
+
+![Example use of zodiacal estimate](/docs/images/fig3.png)
+
+And here's an example of how some observations can be dominated by zodiacal light (dashed line):
+
+![Example use of zodiacal estimate](/docs/images/fig6.png)
+
+# What you'll need to use this tool
+Essentially, all you need to know is when your Spitzer observation was taken and where (in RA, Dec) the telescope was pointed. Specifically, you'll want the following information before you proceed (for each observation in which you want an output mid-IR spectrum):
+   - year
+   - month
+   - day
+   - right ascension (in HMS or degrees)
+   - declination (in HMS or degrees)
+   
+# Typical outputs
+
 # Installation
 1. First, download this repository. Your best bet is to just clone it. From the terminal:
    - ``git clone https://github.com/mattjshannon/zod-light.git``
@@ -27,6 +48,15 @@ and
      - ``make linux``
      - ``make solaris``
 
+
+# Running an example
+
+
+# Inputs
+
+# How to format your queries
+
+# Outputs
 
 
 
