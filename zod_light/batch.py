@@ -62,13 +62,13 @@ def extract_observation_properties(table):
         ra_min = sub_str[1]
         ra_sec = sub_str[2]
 
-        dec_hour = sub_str[4]
-        dec_min = sub_str[5]
-        dec_sec = sub_str[6]
+        dec_deg = sub_str[4]
+        dec_arcmin = sub_str[5]
+        dec_arcsec = sub_str[6]
 
         # Combine in the desired format.
         ra = ra_hour + ':' + ra_min + ':' + ra_sec
-        dec = dec_hour + ':' + dec_min + ':' + dec_sec
+        dec = dec_deg + ':' + dec_arcmin + ':' + dec_arcsec
 
         return ra, dec
 
